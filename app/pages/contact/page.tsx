@@ -218,30 +218,31 @@ const ContactForm = () => {
         </div>
 
         {/* Phone */}
-        <div className="flex flex-col w-full">
-          <label htmlFor="phone" className="font-semibold mb-1">
-            Phone
-          </label>
-          <div className="relative w-full">
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleInputChange}
-              className={`border rounded-md pl-16 border-gray-300 flex justify-center
-                bg-gradient-to-b from-zinc-200 pb-6 pt-8  backdrop-blur-2xl
-                dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static
-                lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30 ${formErrors.phone ? "border-red-500" : ""}  bg-pink-500`}
-              placeholder="Enter your phone number"
-              required
-            />
-            {/* <span className="absolute left-0 pl-5 top-1/2 transform -translate-y-1/2 bg-primary h-full flex justify-center items-center">
-              {countryCode}
-            </span> */}
-          </div>
-          {formErrors.phone && <small className="text-red-500">Phone is required</small>}
-        </div>
+        {/* Phone */}
+<div className="flex flex-col w-full">
+  <label htmlFor="phone" className="font-semibold mb-1">
+    Phone
+  </label>
+  <div className="relative w-full">
+    <input
+      type="tel"
+      id="phone"
+      name="phone"
+      value={formData.phone}
+      onChange={handleInputChange}
+      className={`border rounded-md pl-16 border-gray-300 flex justify-center
+        bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl
+        dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static
+        lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30 ${formErrors.phone ? "border-red-500" : ""}`}
+      placeholder="Enter your phone number"
+      required
+    />
+    <span className="absolute left-0 pl-5 top-1/2 transform -translate-y-1/2 bg-primary h-full flex justify-center items-center">
+      {countryCode}
+    </span>
+  </div>
+  {formErrors.phone && <small className="text-red-500">Phone is required</small>}
+</div>
 
         {/* Message */}
         <div className="flex flex-col">

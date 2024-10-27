@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { ThemeModeToggle } from "@/components/theme-mode-toggle";
 import { ThemeColorToggle } from "@/components/theme-color-toggle";
 import { FullscreenModeToggle } from "@/app/components/navbars/profile/FullscreenModeToggle";
