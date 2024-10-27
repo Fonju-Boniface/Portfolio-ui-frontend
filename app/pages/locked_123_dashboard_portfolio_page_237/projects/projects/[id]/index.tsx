@@ -1,14 +1,29 @@
-// pages/projects/[id]/index.tsx
 "use client";
 
 import React, { useEffect, useState } from "react";
 import { ref, onValue } from "firebase/database";
 import { useRouter } from "next/router";
-import { database } from "../../../../firebase"; // Adjust the path as needed
+import { database } from "../../../../../firebase"; // Adjust the path as needed
 import Image from "next/image"; // Use the Next.js Image component
 
+// Define a Project type
+interface Project {
+  id: string;
+  projectName: string;
+  imageUrl?: string; // Optional property
+  descriptionSummary: string;
+  description: string;
+  githubLink: string;
+  liveLink: string;
+  generalTools?: string[];
+  frontendTools?: string[];
+  backendTools?: string[];
+  researchTools?: string[];
+  deploymentTools?: string[];
+}
+
 const ProjectDetails = () => {
-  const [project, setProject] = useState<any>(null); // Store the project details
+  const [project, setProject] = useState<Project | null>(null); // Store the project details
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -22,7 +37,7 @@ const ProjectDetails = () => {
       const unsubscribe = onValue(projectRef, (snapshot) => {
         const data = snapshot.val();
         if (data) {
-          setProject({ id, ...data });
+          setProject({ id, ...data } as Project); // Cast to Project type
         } else {
           setError("Project not found.");
         }
@@ -47,14 +62,13 @@ const ProjectDetails = () => {
     <div className="p-8">
       <h1 className="text-xl font-bold mb-4">{project.projectName}</h1>
       {project.imageUrl && (
-        
         <Image
-                  src={project.imageUrl}
-                  alt="Project Image"
-                  width={400}
-                  height={400}
-                  className="rounded-md mb-2"
-                />
+          src={project.imageUrl}
+          alt="Project Image"
+          width={400}
+          height={400}
+          className="rounded-md mb-2"
+        />
       )}
       <p>
         Description Summary: <b className="text-primary">{project.descriptionSummary}</b>

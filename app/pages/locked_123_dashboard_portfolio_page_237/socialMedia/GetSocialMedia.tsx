@@ -5,8 +5,16 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
+// Define the structure of the education data
+type Education = {
+  id: string;
+  title: string;
+  institution: string;
+  imageUrl?: string; // Optional if not every entry has an image
+};
+
 const GetSocialMedia = () => {
-  const [educationData, setEducationData] = useState<any[]>([]);
+  const [educationData, setEducationData] = useState<Education[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -20,7 +28,7 @@ const GetSocialMedia = () => {
           const educationArray = Object.keys(data).map((key) => ({
             id: key,
             ...data[key],
-          }));
+          })) as Education[]; // Assert that the data is of type Education[]
           setEducationData(educationArray);
         }
         setLoading(false);
@@ -40,12 +48,11 @@ const GetSocialMedia = () => {
       {educationData.length === 0 ? (
         <p className="text-center">No Social Media data found.</p>
       ) : (
-        <div className=" flex justify-center items-center flex-wrap gap-4 mt-8 w-full">
+        <div className="flex justify-center items-center flex-wrap gap-4 mt-8 w-full">
           {educationData.map((education) => (
             <div
               key={education.id}
-              className="mb-8 flex flex-col justify-center items-center relative p-2 rounded-md w-full
-                md:w-[45%]"
+              className="mb-8 flex flex-col justify-center items-center relative p-2 rounded-md w-full md:w-[45%]"
             >
               {/* Education Content */}
               <div
@@ -60,7 +67,7 @@ const GetSocialMedia = () => {
                   <div className="bg-primary p-1 rounded-full flex items-center justify-center w-[100px] h-[100px]">
                     <Image
                       src={education.imageUrl}
-                      alt={education.educationName}
+                      alt={education.title}
                       width={100}
                       height={100}
                       className="rounded-full object-cover w-[100%] h-[100%]"
@@ -76,7 +83,7 @@ const GetSocialMedia = () => {
                   href={education.institution}
                   rel="noopener noreferrer"
                   target="_blank"
-                  className="w-full "
+                  className="w-full"
                 >
                   <Button
                     variant="outline"
@@ -87,7 +94,6 @@ const GetSocialMedia = () => {
                 </Link>
               </div>
             </div>
-            // </div>
           ))}
         </div>
       )}

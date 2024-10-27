@@ -21,14 +21,22 @@ import {
 import GetSocialMedia from "./GetSocialMedia";
 import Link from "next/link";
 
+// Define a type for the education data
+type Education = {
+  id: string;
+  title: string;
+  institution: string;
+  imageUrl?: string;
+};
+
 const SocialMedia = () => {
-  const [educationData, setEducationData] = useState({
+  const [educationData, setEducationData] = useState<Omit<Education, 'id'>>({
     title: "",
     institution: "",
     imageUrl: "",
   });
 
-  const [Education, setEducation] = useState<any[]>([]);
+  const [education, setEducation] = useState<Education[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
@@ -36,9 +44,7 @@ const SocialMedia = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   const [editMode, setEditMode] = useState(false);
-  const [currentEducationId, setCurrentEducationId] = useState<string | null>(
-    null,
-  );
+  const [currentEducationId, setCurrentEducationId] = useState<string | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const storage = getStorage();
@@ -48,7 +54,7 @@ const SocialMedia = () => {
     onValue(educationsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedEducations = data
-        ? Object.keys(data).map((key) => ({ id: key, ...data[key] }))
+        ? Object.keys(data).map((key) => ({ id: key, ...data[key] })) as Education[]
         : [];
       setEducation(loadedEducations);
     });
@@ -57,7 +63,7 @@ const SocialMedia = () => {
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
+    >
   ) => {
     const { name, value } = e.target;
     setEducationData({ ...educationData, [name]: value });
@@ -75,7 +81,7 @@ const SocialMedia = () => {
     }
   };
 
-  const handleEdit = (education: any) => {
+  const handleEdit = (education: Education) => {
     setEducationData({
       title: education.title,
       institution: education.institution,
@@ -98,15 +104,16 @@ const SocialMedia = () => {
       if (imageFile) {
         const imageRef = storageRef(
           storage,
-          `MySocialMediasImages/${Date.now()}-${imageFile.name}`,
+          `MySocialMediasImages/${Date.now()}-${imageFile.name}`
         );
         await uploadBytes(imageRef, imageFile);
         imageUrl = await getDownloadURL(imageRef);
       }
 
-      const updatedEducationData = {
+      const updatedEducationData: Education = {
         ...educationData,
         imageUrl,
+        id: currentEducationId || "", // Ensure id is present
       };
 
       const educationsRef = ref(database, "MySocialMedias");
@@ -114,7 +121,7 @@ const SocialMedia = () => {
       if (editMode) {
         await update(
           ref(database, `MySocialMedias/${currentEducationId}`),
-          updatedEducationData,
+          updatedEducationData
         );
       } else {
         await push(educationsRef, updatedEducationData);
@@ -166,7 +173,7 @@ const SocialMedia = () => {
         </DialogTrigger>
         <DialogContent>
           <DialogTitle>
-            {editMode ? "Edit  Social Media" : "Add New  Social Media"}
+            {editMode ? "Edit Social Media" : "Add New Social Media"}
           </DialogTitle>
           <form onSubmit={handleSubmit} className="space-y-4 overflow-auto">
             {/* Image Upload */}
@@ -196,7 +203,7 @@ const SocialMedia = () => {
               name="title"
               value={educationData.title}
               onChange={handleChange}
-              placeholder="media Name"
+              placeholder="Media Name"
               className="w-full p-2 border border-gray-300 rounded"
               required
             />
@@ -204,7 +211,7 @@ const SocialMedia = () => {
               name="institution"
               value={educationData.institution}
               onChange={handleChange}
-              placeholder="media Link"
+              placeholder="Media Link"
               className="w-full p-2 border border-gray-300 rounded"
               required
             />
@@ -213,8 +220,8 @@ const SocialMedia = () => {
               {submitting
                 ? "Submitting..."
                 : editMode
-                  ? "Update  Social Media"
-                  : "Add  Social Media"}
+                ? "Update Social Media"
+                : "Add Social Media"}
             </Button>
           </form>
         </DialogContent>
@@ -222,10 +229,9 @@ const SocialMedia = () => {
 
       {/* Education List */}
       <div className="grid grid-cols-1 gap-4 mt-8">
-        {Education.map((edu) => (
+        {education.map((edu) => (
           <div key={edu.id} className="p-4 border rounded">
             <h2 className="text-lg font-semibold">{edu.title}</h2>
-            {/* <p>{edu.institution}</p> */}
 
             {/* Display image if available */}
             {edu.imageUrl && (
@@ -243,7 +249,7 @@ const SocialMedia = () => {
               href={edu.institution}
               rel="noopener noreferrer"
               target="_blank"
-              className="w-full my-1 mt-4  "
+              className="w-full my-1 mt-4"
             >
               <Button
                 variant="outline"

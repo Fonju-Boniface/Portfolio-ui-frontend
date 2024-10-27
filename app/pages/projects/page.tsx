@@ -5,11 +5,20 @@ import { ref, onValue } from "firebase/database";
 import Image from "next/image"; // Use the Next.js Image component
 import { database } from "../../firebase"; // Adjust the path as needed
 import Link from "next/link"; // Import Link for navigation
-
 import { Button } from "@/components/ui/button";
 
+// Define a type for the project data
+type Project = {
+  id: string;
+  projectName: string;
+  imageUrl?: string;
+  descriptionSummary: string;
+  liveLink: string;
+  githubLink: string;
+};
+
 const Projects = () => {
-  const [projects, setProjects] = useState<any[]>([]); // To store multiple projects
+  const [projects, setProjects] = useState<Project[]>([]); // Use the Project type
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,7 +31,7 @@ const Projects = () => {
       (snapshot) => {
         const data = snapshot.val();
         if (data) {
-          const loadedProjects = Object.keys(data).map((key) => ({
+          const loadedProjects: Project[] = Object.keys(data).map((key) => ({
             id: key,
             ...data[key],
           }));
@@ -52,7 +61,7 @@ const Projects = () => {
         My Projects
       </h1>
       <p className="text-sm sm:text-base md:text-lg lg:text-xl text-center mt-4">
-        Explore some of the innovative and creative projects {"I've"} worked on.
+        Explore some of the innovative and creative projects I've worked on.
       </p>
 
       <div className="mt-8 grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -78,13 +87,8 @@ const Projects = () => {
                     className="rounded-md w-full dark:bg-zinc-800/30 h-auto object-cover"
                   />
                 )}
-                <h2 className="text-xl font-bold mt-4">
-                  {project.projectName}
-                </h2>
-
-                <small className="text-sm sm:text-xs mt-2">
-                  {project.descriptionSummary}
-                </small>
+                <h2 className="text-xl font-bold mt-4">{project.projectName}</h2>
+                <small className="text-sm sm:text-xs mt-2">{project.descriptionSummary}</small>
               </div>
               <div className="flex flex-col w-full justify-center items-center gap-[.1rem]">
                 <Link
@@ -118,7 +122,7 @@ const Projects = () => {
                   >
                     <Button
                       variant="outline"
-                      className=" w-full text-secondary-foreground flex items-center space-x-2"
+                      className="w-full text-secondary-foreground flex items-center space-x-2"
                     >
                       Source Code
                     </Button>

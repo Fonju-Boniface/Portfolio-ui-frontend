@@ -33,11 +33,27 @@ type CountryOption = {
   code: string; // Telephone code
 };
 
+type Rating = {
+  id: string;
+  name: string;
+  email: string;
+  phone: {
+    phoneNumber: string;
+    countryCode: string;
+    countryFlag: string;
+  };
+  profession: string;
+  website: string;
+  description: string;
+  myContribution: string;
+  rating: number;
+  review: string;
+  imageUrl: string;
+};
+
 const RatingForm = () => {
   const [countries, setCountries] = useState<CountryOption[]>([]);
-  const [selectedCountry, setSelectedCountry] = useState<CountryOption | null>(
-    null
-  );
+  const [selectedCountry, setSelectedCountry] = useState<CountryOption | null>(null);
   const [phoneNumber, setPhoneNumber] = useState<string | undefined>();
   const [rating, setRating] = useState<number>(0);
   const [review, setReview] = useState<string>("");
@@ -54,10 +70,10 @@ const RatingForm = () => {
   const [myContribution, setMyContribution] = useState<string>("");
 
   const [loading, setLoading] = useState(false);
-  const [ratings, setRatings] = useState<any[]>([]);
+  const [ratings, setRatings] = useState<Rating[]>([]);
   const [ratingToDelete, setRatingToDelete] = useState<string | null>(null);
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
-  const [ratingToUpdate, setRatingToUpdate] = useState<any | null>(null);
+  const [ratingToUpdate, setRatingToUpdate] = useState<Rating | null>(null);
 
   // Fetch country data
   useEffect(() => {
@@ -85,7 +101,7 @@ const RatingForm = () => {
     onValue(ratingsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedRatings = data
-        ? Object.entries(data).map(([id, rating]) => ({ id, ...rating }))
+        ? Object.entries(data).map(([id, rating]) => ({ id, ...rating } as Rating))
         : [];
       setRatings(loadedRatings);
     });
@@ -99,82 +115,72 @@ const RatingForm = () => {
     }
   };
 
-  
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  if (!selectedCountry || !phoneNumber || !imageUrl) {
-    alert("Please fill in all required fields.");
-    return;
-  }
-
-  setLoading(true);
-  
-  try {
-    const ratingData = {
-      name,
-      email,
-      phone: {
-        phoneNumber,
-        countryCode: selectedCountry.value,
-        countryFlag: selectedCountry.flag,
-      },
-      profession,
-      website,
-      description,
-      myContribution,
-      rating,
-      review,
-      imageUrl,
-    };
-
-    if (ratingToUpdate) {
-      // Update existing rating
-      await update(ref(db, `ratings/${ratingToUpdate.id}`), ratingData);
-      alert("Rating updated successfully!");
-    } else {
-      // Submit new rating
-      const newRatingRef = push(ref(db, "ratings"));
-      await set(newRatingRef, ratingData);
-      alert("Rating submitted successfully!");
+    if (!selectedCountry || !phoneNumber || !imageUrl) {
+      alert("Please fill in all required fields.");
+      return;
     }
 
-    // Reset form fields after submission
-    setName("");
-    setEmail("");
-    setPhoneNumber("");
-    setSelectedCountry(null);
-    setProfession("");
-    setWebsite("");
-    setDescription("");
-    setMyContribution("");
-    setRating(0);
-    setReview("");
-    setImageUrl("");
-    setRatingToUpdate(null);
+    setLoading(true);
+    
+    try {
+      const ratingData: Rating = {
+        id: "", // Will be generated on submission
+        name,
+        email,
+        phone: {
+          phoneNumber,
+          countryCode: selectedCountry.value,
+          countryFlag: selectedCountry.flag,
+        },
+        profession,
+        website,
+        description,
+        myContribution,
+        rating,
+        review,
+        imageUrl,
+      };
 
-  } catch (error) {
-    console.error("Error submitting rating:", error);
-    alert("There was an issue submitting your rating. Please try again.");
-  } finally {
-    setLoading(false);
-    setIsUpdateDialogOpen(false);
-  }
-};
+      if (ratingToUpdate) {
+        // Update existing rating
+        await update(ref(database, `ratings/${ratingToUpdate.id}`), ratingData);
+        alert("Rating updated successfully!");
+      } else {
+        // Submit new rating
+        const newRatingRef = push(ref(database, "ratings"));
+        await set(newRatingRef, ratingData);
+        alert("Rating submitted successfully!");
+      }
+
+      // Reset form fields after submission
+      resetForm();
+
+    } catch (error) {
+      console.error("Error submitting rating:", error);
+      alert("There was an issue submitting your rating. Please try again.");
+    } finally {
+      setLoading(false);
+      setIsUpdateDialogOpen(false);
+    }
+  };
 
   const resetForm = () => {
     setName("");
     setEmail("");
     setPhoneNumber("");
+    setSelectedCountry(null);
     setProfession("");
     setWebsite("");
     setDescription("");
     setMyContribution("");
     setRating(0);
     setReview("");
-    setImageFile(null);
     setImageUrl("");
-    setSelectedCountry(null);
+    setImageFile(null);
+    setRatingToUpdate(null);
   };
 
   const handleDeleteRating = async () => {
@@ -210,20 +216,13 @@ const handleSubmit = async (e: React.FormEvent) => {
           url = await getDownloadURL(storageReference);
         }
 
-        const updatedData = {
-          name,
-          email,
+        const updatedData: Rating = {
+          ...ratingToUpdate, // Spread existing data
           phone: {
-            countryCode: selectedCountry?.code,
+            countryCode: selectedCountry?.code || ratingToUpdate.phone.countryCode,
             phoneNumber,
-            countryFlag: selectedCountry?.flag,
+            countryFlag: selectedCountry?.flag || ratingToUpdate.phone.countryFlag,
           },
-          profession,
-          website,
-          description,
-          myContribution,
-          rating,
-          review,
           imageUrl: url,
         };
 
@@ -417,7 +416,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           setRatingToDelete(id);
           setIsDeleteDialogOpen(true);
         }}
-        onEdit={(rating: any) => {
+        onEdit={(rating: Rating) => {
           setRatingToUpdate(rating);
           setName(rating.name);
           setEmail(rating.email);

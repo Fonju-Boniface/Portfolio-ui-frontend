@@ -32,39 +32,46 @@ type CountryOption = {
   code: string; // Telephone code
 };
 
+interface Rating {
+  id?: string;
+  name: string;
+  email: string;
+  phone: {
+    countryCode: string;
+    phoneNumber: string | undefined;
+    countryFlag: string;
+  };
+  profession: string;
+  website?: string;
+  description?: string;
+  myContribution?: string;
+  rating: number;
+  review: string;
+  imageUrl?: string;
+}
+
 const GetRating = () => {
   const [countries, setCountries] = useState<CountryOption[]>([]);
-  const [selectedCountry, setSelectedCountry] = useState<CountryOption | null>(
-    null,
-  );
+  const [selectedCountry, setSelectedCountry] = useState<CountryOption | null>(null);
   const [phoneNumber, setPhoneNumber] = useState<string | undefined>();
   const [rating, setRating] = useState<number>(0);
   const [review, setReview] = useState<string>("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string>("");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  // Form Fields
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [profession, setProfession] = useState<string>("");
   const [website, setWebsite] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [myContribution, setMyContribution] = useState<string>("");
-
   const [loading, setLoading] = useState(false);
-  const [ratings, setRatings] = useState<any[]>([]);
+  const [ratings, setRatings] = useState<Rating[]>([]);
   const [ratingToDelete, setRatingToDelete] = useState<string | null>(null);
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
-  const [ratingToUpdate, setRatingToUpdate] = useState<any | null>(null);
-
-  // Add this function to handle the delete action
-  const openDeleteDialog = (ratingId: string) => {
-    setRatingToDelete(ratingId);
-    setIsDeleteDialogOpen(true);
-  };
+  const [ratingToUpdate, setRatingToUpdate] = useState<Rating | null>(null);
 
   useEffect(() => {
-    // Fetch country data
     axios
       .get("https://restcountries.com/v3.1/all")
       .then((response) => {
@@ -84,12 +91,11 @@ const GetRating = () => {
   }, []);
 
   useEffect(() => {
-    // Fetch ratings from Firebase
     const ratingsRef = ref(database, "ratings");
     onValue(ratingsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedRatings = data
-        ? Object.entries(data).map(([id, rating]) => ({ id, ...rating }))
+        ? Object.entries(data).map(([id, rating]) => ({ id, ...rating })) as Rating[]
         : [];
       setRatings(loadedRatings);
     });
@@ -110,21 +116,18 @@ const GetRating = () => {
       let url = "";
       if (imageFile) {
         const storage = getStorage();
-        const storageReference = storageRef(
-          storage,
-          `ratings/${imageFile.name}`,
-        );
+        const storageReference = storageRef(storage, `ratings/${imageFile.name}`);
         await uploadBytes(storageReference, imageFile);
         url = await getDownloadURL(storageReference);
       }
 
-      const formData = {
+      const formData: Rating = {
         name,
         email,
         phone: {
-          countryCode: selectedCountry?.code,
+          countryCode: selectedCountry?.code || "",
           phoneNumber,
-          countryFlag: selectedCountry?.flag,
+          countryFlag: selectedCountry?.flag || "",
         },
         profession,
         website,
@@ -139,15 +142,12 @@ const GetRating = () => {
       await push(ratingsRef, formData);
       toast.success("Rating submitted successfully!");
       setIsUpdateDialogOpen(false);
-
       resetForm();
     } catch (error) {
       console.error("Error submitting rating:", error);
       toast.error("Failed to submit rating!");
     } finally {
       setLoading(false);
-      setIsUpdateDialogOpen(false);
-
     }
   };
 
@@ -172,7 +172,6 @@ const GetRating = () => {
         const ratingRef = ref(database, `ratings/${ratingToDelete}`);
         await remove(ratingRef);
         toast.success("Rating deleted successfully!");
-        
       } catch (error) {
         console.error("Error deleting rating:", error);
         toast.error("Failed to delete rating!");
@@ -191,9 +190,9 @@ const GetRating = () => {
           name,
           email,
           phone: {
-            countryCode: selectedCountry?.code,
+            countryCode: selectedCountry?.code || "",
             phoneNumber,
-            countryFlag: selectedCountry?.flag,
+            countryFlag: selectedCountry?.flag || "",
           },
           profession,
           website,
@@ -201,7 +200,7 @@ const GetRating = () => {
           myContribution,
           rating,
           review,
-          imageUrl: imageUrl || ratingToUpdate.imageUrl, // Keep the old image URL if not updating
+          imageUrl: imageUrl || ratingToUpdate.imageUrl,
         };
 
         await update(ratingRef, updatedData);
@@ -234,7 +233,6 @@ const GetRating = () => {
             onSubmit={ratingToUpdate ? handleUpdateRating : handleSubmit}
             className="space-y-4 overflow-auto"
           >
-            {/* Form Fields */}
             <div className="space-y-2">
               <label htmlFor="name" className="block font-medium">
                 Name
@@ -349,10 +347,6 @@ const GetRating = () => {
               />
             </div>
 
-            {/* <div className="space-y-2">
-            <label htmlFor="review" className="block font-medium">Review</label>
-            <textarea id="review" value={review} onChange={(e) => setReview(e.target.value)} className="border p-2 w-full" />
-          </div> */}
             <div className="space-y-2">
               <label htmlFor="review" className="block font-medium">
                 Review
@@ -397,7 +391,7 @@ const GetRating = () => {
           </form>
         </DialogContent>
       </Dialog>
-      {/* // Add this Dialog component for delete confirmation */}
+
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent>
           <DialogTitle>Confirm Deletion</DialogTitle>
@@ -414,12 +408,10 @@ const GetRating = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      
 
       <GetRatingMain />
     </div>
   );
 };
 
-
-export default GetRating
+export default GetRating;

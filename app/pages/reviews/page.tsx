@@ -24,41 +24,53 @@ import {
 import { database } from "../../firebase";
 import toast from "react-hot-toast";
 import GetRatingMain from "../locked_123_dashboard_portfolio_page_237/rating/GetRatingMain";
-// import GetRatingMain from "./GetRatingMain";
 
-type CountryOption = {
+interface CountryOption {
   label: string;
   value: string;
   flag: string;
   code: string; // Telephone code
-};
+}
+
+interface Rating {
+  id: string;
+  name: string;
+  email: string;
+  phone: {
+    countryCode: string;
+    phoneNumber: string;
+    countryFlag: string;
+  };
+  profession: string;
+  website: string;
+  description: string;
+  myContribution: string;
+  rating: number;
+  review: string;
+  imageUrl: string;
+}
 
 const GetRating = () => {
   const [countries, setCountries] = useState<CountryOption[]>([]);
-  const [selectedCountry, setSelectedCountry] = useState<CountryOption | null>(
-    null,
-  );
+  const [selectedCountry, setSelectedCountry] = useState<CountryOption | null>(null);
   const [phoneNumber, setPhoneNumber] = useState<string | undefined>();
   const [rating, setRating] = useState<number>(0);
   const [review, setReview] = useState<string>("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string>("");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  // Form Fields
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [profession, setProfession] = useState<string>("");
   const [website, setWebsite] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [myContribution, setMyContribution] = useState<string>("");
-
   const [loading, setLoading] = useState(false);
-  const [ratings, setRatings] = useState<any[]>([]);
+  const [ratings, setRatings] = useState<Rating[]>([]);
   const [ratingToDelete, setRatingToDelete] = useState<string | null>(null);
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
-  const [ratingToUpdate, setRatingToUpdate] = useState<any | null>(null);
+  const [ratingToUpdate, setRatingToUpdate] = useState<Rating | null>(null);
 
-  // Add this function to handle the delete action
   const openDeleteDialog = (ratingId: string) => {
     setRatingToDelete(ratingId);
     setIsDeleteDialogOpen(true);
@@ -215,7 +227,7 @@ const GetRating = () => {
 
   return (
     <div className="p-6 flex flex-col justify-center items-center w-full">
-      <Button onClick={() => setIsUpdateDialogOpen(true)} className="mb-4 ">
+      <Button onClick={() => setIsUpdateDialogOpen(true)} className="mb-4">
         Add Rating
       </Button>
       <Dialog open={isUpdateDialogOpen} onOpenChange={setIsUpdateDialogOpen}>
@@ -345,10 +357,6 @@ const GetRating = () => {
               />
             </div>
 
-            {/* <div className="space-y-2">
-            <label htmlFor="review" className="block font-medium">Review</label>
-            <textarea id="review" value={review} onChange={(e) => setReview(e.target.value)} className="border p-2 w-full" />
-          </div> */}
             <div className="space-y-2">
               <label htmlFor="review" className="block font-medium">
                 Review
@@ -380,10 +388,7 @@ const GetRating = () => {
             </div>
 
             <DialogFooter>
-              <Button
-                type="button"
-                onClick={() => setIsUpdateDialogOpen(false)}
-              >
+              <Button type="button" onClick={() => setIsUpdateDialogOpen(false)}>
                 Cancel
               </Button>
               <Button type="submit" disabled={loading}>
@@ -393,7 +398,7 @@ const GetRating = () => {
           </form>
         </DialogContent>
       </Dialog>
-      {/* // Add this Dialog component for delete confirmation */}
+
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent>
           <DialogTitle>Confirm Deletion</DialogTitle>
@@ -410,12 +415,10 @@ const GetRating = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      
 
       <GetRatingMain />
     </div>
   );
 };
 
-
-export default GetRating
+export default GetRating;

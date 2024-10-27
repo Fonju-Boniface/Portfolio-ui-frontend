@@ -27,7 +27,7 @@ const MyHome = () => {
     endName: "",
     tags: [] as string[], // Initialize tags as an empty array
   });
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false); // Manage dialog state
   const [submitting, setSubmitting] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -66,19 +66,16 @@ const MyHome = () => {
 
   const addTag = () => {
     const trimmedTag = newTag.trim();
-  
-    // Ensure that tags are always an array before checking
     const currentTags = profileData.tags || [];
-  
+
     if (trimmedTag && !currentTags.includes(trimmedTag)) {
       setProfileData((prevData) => ({
         ...prevData,
-        tags: [...currentTags, trimmedTag], // Spread the currentTags array here
+        tags: [...currentTags, trimmedTag],
       }));
       setNewTag(""); // Clear the input after adding the tag
     }
   };
-  
 
   const removeTag = (tagToRemove: string) => {
     setProfileData((prevData) => ({
@@ -95,14 +92,12 @@ const MyHome = () => {
     try {
       let imageUrl = profileData.imageUrl;
 
-      // If a new image file is selected, upload it to Firebase Storage and get the download URL
       if (imageFile) {
         const imageRef = storageRef(storage, `MyHomeImages/${imageFile.name}`);
         await uploadBytes(imageRef, imageFile);
         imageUrl = await getDownloadURL(imageRef);
       }
 
-      // Update profile data with the image URL and tags
       const updatedProfileData = { ...profileData, imageUrl };
       const profileRef = ref(database, "MyHome");
       await set(profileRef, updatedProfileData);
@@ -111,7 +106,7 @@ const MyHome = () => {
       setImageFile(null); // Reset file input
       setIsDialogOpen(false); // Close the dialog after successful submission
     } catch (error) {
-      setNotification("Failed to update Home."+error);
+      setNotification("Failed to update Home." + error);
     } finally {
       setSubmitting(false);
     }
@@ -121,9 +116,9 @@ const MyHome = () => {
     <div className="p-8">
       <h1 className="text-xl font-bold mb-4">My Home</h1>
 
-      <Dialog>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger>
-          <Button variant="outline">Edit Home</Button>
+          <Button variant="outline" onClick={() => setIsDialogOpen(true)}>Edit Home</Button>
         </DialogTrigger>
         <DialogContent>
           <DialogTitle>Edit My Home</DialogTitle>
@@ -141,7 +136,7 @@ const MyHome = () => {
               />
               {previewImage && (
                 <Image
-                  src={previewImage} // Preview image
+                  src={previewImage}
                   alt="Profile"
                   width={185}
                   height={185}
@@ -189,8 +184,7 @@ const MyHome = () => {
                 {profileData?.tags?.map((tag) => (
                   <div
                     key={tag}
-                    className="bg-primary rounded-md  px-3 py-1 m-1 flex items-center
-                      justify-between"
+                    className="bg-primary rounded-md px-3 py-1 m-1 flex items-center justify-between"
                   >
                     <span>{tag}</span>
                     <Button
@@ -217,7 +211,7 @@ const MyHome = () => {
             </Button>
 
             <DialogClose>
-              <Button variant="outline">Close</Button>
+              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Close</Button>
             </DialogClose>
           </form>
         </DialogContent>

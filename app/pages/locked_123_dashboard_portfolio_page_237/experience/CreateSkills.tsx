@@ -1,15 +1,14 @@
-"use client";
-
+"use client"
 import React, { useState, useEffect } from "react";
 import { ref, push, onValue, update, remove } from "firebase/database";
-import Image from "next/image"; // Use the Next.js Image component
+import Image from "next/image";
 import {
   getStorage,
   ref as storageRef,
   uploadBytes,
   getDownloadURL,
 } from "firebase/storage";
-import { database } from "../../../firebase"; // Adjust the path as needed
+import { database } from "../../../firebase";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,11 +16,22 @@ import {
   DialogContent,
   DialogTitle,
   DialogClose,
-} from "@/components/ui/dialog"; // Import Shadcn dialog components
+} from "@/components/ui/dialog";
 import GetSkills from "./GetSkills";
 
+interface Skill {
+  id: string;
+  title: string;
+  SkDescription: string;
+  SkCategory: string;
+  SkType: string;
+  SkPercentage: string;
+  SkYears: string;
+  imageUrl?: string;
+}
+
 const CreateSkills = () => {
-  const [skillData, setSkillData] = useState({
+  const [skillData, setSkillData] = useState<Skill>({
     title: "",
     SkDescription: "",
     SkCategory: "",
@@ -31,33 +41,31 @@ const CreateSkills = () => {
     imageUrl: "",
   });
 
-  const [Skills, setSkills] = useState<any[]>([]); // To store multiple projects
+  const [Skills, setSkills] = useState<Skill[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [imageFile, setImageFile] = useState<File | null>(null); // Store the file to be uploaded
-
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [editMode, setEditMode] = useState(false);
   const [currentSkillId, setCurrentSkillId] = useState<string | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  const storage = getStorage(); // Firebase storage instance
+  const storage = getStorage();
 
   useEffect(() => {
-    // Fetch existing projects from Firebase
     const skillsRef = ref(database, "MySkills");
     onValue(skillsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedSkills = data
-        ? Object.keys(data).map((key) => ({ id: key, ...data[key] }))
+        ? Object.keys(data).map((key) => ({ id: key, ...data[key] } as Skill))
         : [];
-        setSkills(loadedSkills);
+      setSkills(loadedSkills);
     });
   }, []);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setSkillData({ ...skillData, [name]: value });
@@ -86,7 +94,7 @@ const CreateSkills = () => {
       if (imageFile) {
         const imageRef = storageRef(
           storage,
-          `skillImages/${Date.now()}-${imageFile.name}`,
+          `skillImages/${Date.now()}-${imageFile.name}`
         );
         await uploadBytes(imageRef, imageFile);
         imageUrl = await getDownloadURL(imageRef);
@@ -95,17 +103,14 @@ const CreateSkills = () => {
       const updatedSkillData = { ...skillData, imageUrl };
       const skillsRef = ref(database, "MySkills");
       if (editMode) {
-        // Update existing project
         await update(
           ref(database, `MySkills/${currentSkillId}`),
-          updatedSkillData,
+          updatedSkillData
         );
       } else {
-        // Add new project
         await push(skillsRef, updatedSkillData);
       }
 
-      // Resetting state and closing the dialog...
       resetForm();
     } catch (error) {
       console.error("Error adding/updating skill:", error);
@@ -117,12 +122,13 @@ const CreateSkills = () => {
 
   const resetForm = () => {
     setSkillData({
-        title: "",
-        SkDescription: "",
-        SkCategory: "",
-        SkPercentage: "",
-        SkYears: "",
-        SkType: "",
+      title: "",
+      SkDescription: "",
+      SkCategory: "",
+      SkPercentage: "",
+      SkYears: "",
+      SkType: "",
+      imageUrl: "",
     });
     setImageFile(null);
     setPreviewImage(null);
@@ -131,7 +137,7 @@ const CreateSkills = () => {
     setCurrentSkillId(null);
   };
 
-  const openEditDialog = (skill: any) => {
+  const openEditDialog = (skill: Skill) => {
     setSkillData(skill);
     setCurrentSkillId(skill.id);
     setIsDialogOpen(true);
@@ -147,7 +153,7 @@ const CreateSkills = () => {
     if (currentSkillId) {
       try {
         await remove(ref(database, `MySkills/${currentSkillId}`));
-        setNotification("skill deleted successfully.");
+        setNotification("Skill deleted successfully.");
       } catch (error) {
         console.error("Error deleting skill:", error);
         setNotification("Failed to delete skill.");
@@ -168,10 +174,9 @@ const CreateSkills = () => {
         </DialogTrigger>
         <DialogContent>
           <DialogTitle>
-            {editMode ? "Edit skill" : "Add New skill"}
+            {editMode ? "Edit Skill" : "Add New Skill"}
           </DialogTitle>
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Image Upload */}
             <div className="relative flex justify-between items-center">
               <label htmlFor="imageUrl" className="block font-medium">
                 Skill Image
@@ -184,21 +189,20 @@ const CreateSkills = () => {
               />
               {previewImage && (
                 <Image
-                  src={previewImage} // Replace with your image path
-                  alt="skill Image"
-                  width={185} // 12rem = 192px
+                  src={previewImage}
+                  alt="Skill Image"
+                  width={185}
                   height={185}
                   className="rounded-sm w-7 h-7 object-cover absolute right-1"
                 />
               )}
             </div>
 
-            {/* Other form inputs */}
             <input
               name="title"
               value={skillData.title}
               onChange={handleChange}
-              placeholder="skill Name"
+              placeholder="Skill Name"
               className="w-full p-2 border border-gray-300 rounded"
               required
             />
@@ -257,16 +261,16 @@ const CreateSkills = () => {
         {Skills.length === 0 ? (
           <p>No Skills found.</p>
         ) : (
-            Skills.map((Skill) => (
-            <div key={Skill.id} className="border p-4 mb-4 rounded">
+          Skills.map((skill) => (
+            <div key={skill.id} className="border p-4 mb-4 rounded">
               <h3 className="font-bold">
                 Skill Name:{" "}
-                <b className="text-primary">{Skill.title}</b>
+                <b className="text-primary">{skill.title}</b>
               </h3>
-              {Skill.imageUrl && (
+              {skill.imageUrl && (
                 <Image
-                  src={Skill.imageUrl}
-                  alt="Project Image"
+                  src={skill.imageUrl}
+                  alt="Skill Image"
                   width={200}
                   height={200}
                   className="rounded-md mb-2"
@@ -274,35 +278,31 @@ const CreateSkills = () => {
               )}
               <p>
                 Skill Category:{" "}
-                <b className="text-primary">{Skill.SkCategory}</b>
+                <b className="text-primary">{skill.SkCategory}</b>
               </p>
               <p>
-                Skill description:{" "}
-                <b className="text-primary">{Skill.SkDescription}</b>
+                Skill Description:{" "}
+                <b className="text-primary">{skill.SkDescription}</b>
               </p>
               <p>
-              Skill Percentage:{" "}
-                <b className="text-primary">{Skill.SkPercentage}</b>
+                Skill Percentage:{" "}
+                <b className="text-primary">{skill.SkPercentage}</b>
               </p>
               <p>
-              Skill Years: <b className="text-primary">{Skill.SkYears}</b>
+                Skill Years: <b className="text-primary">{skill.SkYears}</b>
               </p>
               <p>
-              Skill Type: <b className="text-primary">{Skill.SkType}</b>
+                Skill Type: <b className="text-primary">{skill.SkType}</b>
               </p>
 
               <div className="flex space-x-4 mt-2">
-                <Button
-                  onClick={() => openEditDialog(Skill)}
-                  variant="outline"
-                >
+                <Button onClick={() => openEditDialog(skill)} variant="outline">
                   Edit
                 </Button>
                 <Button
-                  onClick={() => openDeleteDialog(Skill.id)}
+                  onClick={() => openDeleteDialog(skill.id)}
                   variant="outline"
-                  className="bg-red-500 text-white hover:bg-red-700 border border-red-700 transition
-                    duration-300"
+                  className="bg-red-500 text-white hover:bg-red-700 border border-red-700 transition duration-300"
                 >
                   Delete
                 </Button>
@@ -312,7 +312,6 @@ const CreateSkills = () => {
         )}
       </div>
 
-      {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent>
           <DialogTitle>Delete Skill</DialogTitle>
@@ -327,8 +326,7 @@ const CreateSkills = () => {
             <Button
               onClick={handleDelete}
               variant="danger"
-              className="bg-red-500 text-white hover:bg-red-700 border border-red-700 transition
-                duration-300"
+              className="bg-red-500 text-white hover:bg-red-700 border border-red-700 transition duration-300"
             >
               Confirm
             </Button>
@@ -342,4 +340,3 @@ const CreateSkills = () => {
 };
 
 export default CreateSkills;
-

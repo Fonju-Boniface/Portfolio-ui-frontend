@@ -4,8 +4,20 @@ import React, { useEffect, useState } from "react";
 import { ref, onValue } from "firebase/database";
 import { database } from "../../../firebase"; // Adjust the path to your Firebase setup
 
+interface SocialMedia {
+  icon: string;
+  link: string;
+  name: string;
+}
+
+interface ExperienceSummary {
+  years: number;
+  description: string;
+  socialMedia?: SocialMedia[];
+}
+
 const GetExperienceSummary = () => {
-  const [experienceSummary, setExperienceSummary] = useState<any>(null);
+  const [experienceSummary, setExperienceSummary] = useState<ExperienceSummary | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -49,7 +61,7 @@ const GetExperienceSummary = () => {
       <div className="mt-4">
         <h3 className="text-lg font-semibold">Social Media Links</h3>
         {experienceSummary.socialMedia && experienceSummary.socialMedia.length > 0 ? (
-          experienceSummary.socialMedia.map((media: any, index: number) => (
+          experienceSummary.socialMedia.map((media: SocialMedia, index: number) => (
             <div key={index} className="flex space-x-2 mb-2">
               <span className="flex-1">Icon: {media.icon}</span>
               <span className="flex-1">Link: {media.link}</span>

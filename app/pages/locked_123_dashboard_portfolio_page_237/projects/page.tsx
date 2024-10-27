@@ -19,22 +19,39 @@ import {
   DialogClose,
 } from "@/components/ui/dialog"; // Import Shadcn dialog components
 
+// Define a Project type
+interface Project {
+  id: string;
+  projectName: string;
+  imageUrl: string;
+  descriptionSummary: string;
+  description: string;
+  githubLink: string;
+  liveLink: string;
+  generalTools: string[];
+  frontendTools: string[];
+  backendTools: string[];
+  researchTools: string[];
+  deploymentTools: string[];
+}
+
 const Projects = () => {
-  const [projectData, setProjectData] = useState({
+  const [projectData, setProjectData] = useState<Project>({
+    id: "",
     projectName: "",
     imageUrl: "",
     descriptionSummary: "",
     description: "",
     githubLink: "",
     liveLink: "",
-    generalTools: [] as string[],
-    frontendTools: [] as string[],
-    backendTools: [] as string[],
-    researchTools: [] as string[],
-    deploymentTools: [] as string[],
+    generalTools: [],
+    frontendTools: [],
+    backendTools: [],
+    researchTools: [],
+    deploymentTools: [],
   });
 
-  const [projects, setProjects] = useState<any[]>([]); // To store multiple projects
+  const [projects, setProjects] = useState<Project[]>([]); // Updated to use the Project type
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
@@ -60,7 +77,7 @@ const Projects = () => {
     const projectsRef = ref(database, "MyProjects");
     onValue(projectsRef, (snapshot) => {
       const data = snapshot.val();
-      const loadedProjects = data
+      const loadedProjects: Project[] = data
         ? Object.keys(data).map((key) => ({ id: key, ...data[key] }))
         : [];
       setProjects(loadedProjects);
@@ -128,6 +145,7 @@ const Projects = () => {
 
   const resetForm = () => {
     setProjectData({
+      id: "",
       projectName: "",
       imageUrl: "",
       descriptionSummary: "",
@@ -166,7 +184,7 @@ const Projects = () => {
     }));
   };
 
-  const openEditDialog = (project: any) => {
+  const openEditDialog = (project: Project) => {
     setProjectData(project);
     setCurrentProjectId(project.id);
     setIsDialogOpen(true);
@@ -272,7 +290,7 @@ const Projects = () => {
             <div className="flex space-x-2">
               <select
                 value={selectedToolGroup}
-                onChange={(e) => setSelectedToolGroup(e.target.value as any)}
+                onChange={handleToolGroupChange} // Updated to call the new function
                 className="flex-grow p-2 border border-gray-300 rounded"
               >
                 <option value="generalTools">General Tools</option>
@@ -299,8 +317,7 @@ const Projects = () => {
                 {projectData[selectedToolGroup].map((tag) => (
                   <span
                     key={tag}
-                    className="bg-blue-500 text-white rounded-full px-3 py-1 m-1 flex items-center
-                      justify-between"
+                    className="bg-blue-500 text-white rounded-full px-3 py-1 m-1 flex items-center justify-between"
                   >
                     {tag}
                     <button
@@ -334,8 +351,7 @@ const Projects = () => {
         ) : (
           projects.map((project) => (
             <div key={project.id} className="border p-4 mb-4 rounded">
-           
-              <h3 className="font-bold">project Name: <b className="text-primary">{project.projectName}</b></h3>
+              <h3 className="font-bold">Project Name: <b className="text-primary">{project.projectName}</b></h3>
               {project.imageUrl && (
                 <Image
                   src={project.imageUrl}
@@ -345,23 +361,18 @@ const Projects = () => {
                   className="rounded-md mb-2"
                 />
               )}
-              <p>description Summary: <b className="text-primary">{project.descriptionSummary}</b></p>
-              <p>description: <b className="text-primary">{project.description}</b></p>
-              <p>github Link: <b className="text-primary">{project.githubLink}</b></p>
-              <p>live Link: <b className="text-primary">{project.liveLink}</b></p>
-              
+              <p>Description Summary: <b className="text-primary">{project.descriptionSummary}</b></p>
+              <p>Description: <b className="text-primary">{project.description}</b></p>
+              <p>GitHub Link: <b className="text-primary">{project.githubLink}</b></p>
+              <p>Live Link: <b className="text-primary">{project.liveLink}</b></p>
 
               {/* Tags Display by Group */}
               <div className="mt-4">
                 <h4 className="font-semibold">General Tools:</h4>
                 <div className="flex flex-wrap">
-                  {Array.isArray(project.generalTools) &&
-                  project.generalTools.length > 0 ? (
+                  {Array.isArray(project.generalTools) && project.generalTools.length > 0 ? (
                     project.generalTools.map((tag) => (
-                      <span
-                        key={tag}
-                        className="bg-blue-500 text-white rounded-full px-2 py-1 m-1"
-                      >
+                      <span key={tag} className="bg-blue-500 text-white rounded-full px-2 py-1 m-1">
                         {tag}
                       </span>
                     ))
@@ -374,13 +385,9 @@ const Projects = () => {
 
                 <h4 className="font-semibold">Frontend Tools:</h4>
                 <div className="flex flex-wrap">
-                  {Array.isArray(project.frontendTools) &&
-                  project.frontendTools.length > 0 ? (
+                  {Array.isArray(project.frontendTools) && project.frontendTools.length > 0 ? (
                     project.frontendTools.map((tag) => (
-                      <span
-                        key={tag}
-                        className="bg-blue-500 text-white rounded-full px-2 py-1 m-1"
-                      >
+                      <span key={tag} className="bg-blue-500 text-white rounded-full px-2 py-1 m-1">
                         {tag}
                       </span>
                     ))
@@ -391,16 +398,11 @@ const Projects = () => {
                   )}
                 </div>
 
-                {/*  */}
                 <h4 className="font-semibold">Backend Tools:</h4>
                 <div className="flex flex-wrap">
-                  {Array.isArray(project.backendTools) &&
-                  project.backendTools.length > 0 ? (
+                  {Array.isArray(project.backendTools) && project.backendTools.length > 0 ? (
                     project.backendTools.map((tag) => (
-                      <span
-                        key={tag}
-                        className="bg-blue-500 text-white rounded-full px-2 py-1 m-1"
-                      >
+                      <span key={tag} className="bg-blue-500 text-white rounded-full px-2 py-1 m-1">
                         {tag}
                       </span>
                     ))
@@ -411,16 +413,11 @@ const Projects = () => {
                   )}
                 </div>
 
-                {/*  */}
                 <h4 className="font-semibold">Research Tools:</h4>
                 <div className="flex flex-wrap">
-                  {Array.isArray(project.researchTools) &&
-                  project.researchTools.length > 0 ? (
+                  {Array.isArray(project.researchTools) && project.researchTools.length > 0 ? (
                     project.researchTools.map((tag) => (
-                      <span
-                        key={tag}
-                        className="bg-blue-500 text-white rounded-full px-2 py-1 m-1"
-                      >
+                      <span key={tag} className="bg-blue-500 text-white rounded-full px-2 py-1 m-1">
                         {tag}
                       </span>
                     ))
@@ -431,43 +428,33 @@ const Projects = () => {
                   )}
                 </div>
 
-                {/*  */}
-
                 <h4 className="font-semibold">Deployment Tools:</h4>
                 <div className="flex flex-wrap">
-                  {Array.isArray(project.deploymentTools) &&
-                  project.deploymentTools.length > 0 ? (
+                  {Array.isArray(project.deploymentTools) && project.deploymentTools.length > 0 ? (
                     project.deploymentTools.map((tag) => (
-                      <span
-                        key={tag}
-                        className="bg-blue-500 text-white rounded-full px-2 py-1 m-1"
-                      >
+                      <span key={tag} className="bg-blue-500 text-white rounded-full px-2 py-1 m-1">
                         {tag}
                       </span>
                     ))
                   ) : (
                     <span className="text-gray-500">
-                      this project is not yet deployed.
+                      This project is not yet deployed.
                     </span>
                   )}
                 </div>
               </div>
 
               <div className="flex space-x-4 mt-2">
-                <Button
-                  onClick={() => openEditDialog(project)}
-                  variant="outline"
-                >
+                <Button onClick={() => openEditDialog(project)} variant="outline">
                   Edit
                 </Button>
                 <Button
-  onClick={() => openDeleteDialog(project.id)}
-  variant="outline"
-  className="bg-red-500 text-white hover:bg-red-700 border border-red-700 transition duration-300"
->
-  Delete
-</Button>
-
+                  onClick={() => openDeleteDialog(project.id)}
+                  variant="outline"
+                  className="bg-red-500 text-white hover:bg-red-700 border border-red-700 transition duration-300"
+                >
+                  Delete
+                </Button>
               </div>
             </div>
           ))
@@ -480,20 +467,15 @@ const Projects = () => {
           <DialogTitle>Delete Project</DialogTitle>
           <p>Are you sure you want to delete this project?</p>
           <div className="flex justify-end mt-4">
-            <Button
-              onClick={() => setIsDeleteDialogOpen(false)}
-              variant="outline"
-            >
+            <Button onClick={() => setIsDeleteDialogOpen(false)} variant="outline">
               Cancel
             </Button>
-            <Button onClick={handleDelete} variant="danger" className="bg-red-500 text-white hover:bg-red-700 border border-red-700 transition duration-300"
-            >
+            <Button onClick={handleDelete} variant="danger" className="bg-red-500 text-white hover:bg-red-700 border border-red-700 transition duration-300">
               Confirm
             </Button>
           </div>
         </DialogContent>
       </Dialog>
-
     </div>
   );
 };

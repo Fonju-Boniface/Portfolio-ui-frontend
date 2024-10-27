@@ -1,15 +1,14 @@
-"use client";
-
+"use client"
 import React, { useState, useEffect } from "react";
 import { ref, push, onValue, update, remove } from "firebase/database";
-import Image from "next/image"; // Use the Next.js Image component
+import Image from "next/image";
 import {
   getStorage,
   ref as storageRef,
   uploadBytes,
   getDownloadURL,
 } from "firebase/storage";
-import { database } from "../../../firebase"; // Adjust the path as needed
+import { database } from "../../../firebase";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,11 +16,19 @@ import {
   DialogContent,
   DialogTitle,
   DialogClose,
-} from "@/components/ui/dialog"; // Import Shadcn dialog components
+} from "@/components/ui/dialog";
 
+interface Skill {
+  id: string;
+  title: string;
+  SkDescription: string;
+  SkCategory: string;
+  SkType: string;
+  imageUrl?: string;
+}
 
 const CreateCurrentSkills = () => {
-  const [skillData, setSkillData] = useState({
+  const [skillData, setSkillData] = useState<Skill>({
     title: "",
     SkDescription: "",
     SkCategory: "",
@@ -29,33 +36,32 @@ const CreateCurrentSkills = () => {
     imageUrl: "",
   });
 
-  const [Skills, setSkills] = useState<any[]>([]); // To store multiple projects
+  const [Skills, setSkills] = useState<Skill[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [imageFile, setImageFile] = useState<File | null>(null); // Store the file to be uploaded
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   const [editMode, setEditMode] = useState(false);
   const [currentSkillId, setCurrentSkillId] = useState<string | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  const storage = getStorage(); // Firebase storage instance
+  const storage = getStorage();
 
   useEffect(() => {
-    // Fetch existing projects from Firebase
     const skillsRef = ref(database, "MyCurrentSkills");
     onValue(skillsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedSkills = data
-        ? Object.keys(data).map((key) => ({ id: key, ...data[key] }))
+        ? Object.keys(data).map((key) => ({ id: key, ...data[key] } as Skill))
         : [];
-        setSkills(loadedSkills);
+      setSkills(loadedSkills);
     });
   }, []);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setSkillData({ ...skillData, [name]: value });
@@ -84,7 +90,7 @@ const CreateCurrentSkills = () => {
       if (imageFile) {
         const imageRef = storageRef(
           storage,
-          `MyCurrentSkills/${Date.now()}-${imageFile.name}`,
+          `MyCurrentSkills/${Date.now()}-${imageFile.name}`
         );
         await uploadBytes(imageRef, imageFile);
         imageUrl = await getDownloadURL(imageRef);
@@ -93,17 +99,14 @@ const CreateCurrentSkills = () => {
       const updatedSkillData = { ...skillData, imageUrl };
       const skillsRef = ref(database, "MyCurrentSkills");
       if (editMode) {
-        // Update existing project
         await update(
           ref(database, `MyCurrentSkills/${currentSkillId}`),
-          updatedSkillData,
+          updatedSkillData
         );
       } else {
-        // Add new project
         await push(skillsRef, updatedSkillData);
       }
 
-      // Resetting state and closing the dialog...
       resetForm();
     } catch (error) {
       console.error("Error adding/updating current skill:", error);
@@ -128,7 +131,7 @@ const CreateCurrentSkills = () => {
     setCurrentSkillId(null);
   };
 
-  const openEditDialog = (skill: any) => {
+  const openEditDialog = (skill: Skill) => {
     setSkillData(skill);
     setCurrentSkillId(skill.id);
     setIsDialogOpen(true);
@@ -144,7 +147,7 @@ const CreateCurrentSkills = () => {
     if (currentSkillId) {
       try {
         await remove(ref(database, `MyCurrentSkills/${currentSkillId}`));
-        setNotification("current skill deleted successfully.");
+        setNotification("Current skill deleted successfully.");
       } catch (error) {
         console.error("Error deleting current skill:", error);
         setNotification("Failed to delete current skill.");
@@ -157,18 +160,17 @@ const CreateCurrentSkills = () => {
 
   return (
     <div className="p-8">
-      <h1 className="text-xl font-bold mb-4">My current Skills</h1>
+      <h1 className="text-xl font-bold mb-4">My Current Skills</h1>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger>
-          <Button variant="outline">Add New current Skill</Button>
+          <Button variant="outline">Add New Current Skill</Button>
         </DialogTrigger>
         <DialogContent>
           <DialogTitle>
-            {editMode ? "Edit skill" : "Add New skill"}
+            {editMode ? "Edit Skill" : "Add New Skill"}
           </DialogTitle>
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Image Upload */}
             <div className="relative flex justify-between items-center">
               <label htmlFor="imageUrl" className="block font-medium">
                 Skill Image
@@ -181,21 +183,20 @@ const CreateCurrentSkills = () => {
               />
               {previewImage && (
                 <Image
-                  src={previewImage} // Replace with your image path
-                  alt="skill Image"
-                  width={185} // 12rem = 192px
+                  src={previewImage}
+                  alt="Skill Image"
+                  width={185}
                   height={185}
                   className="rounded-sm w-7 h-7 object-cover absolute right-1"
                 />
               )}
             </div>
 
-            {/* Other form inputs */}
             <input
               name="title"
               value={skillData.title}
               onChange={handleChange}
-              placeholder="skill Name"
+              placeholder="Skill Name"
               className="w-full p-2 border border-gray-300 rounded"
               required
             />
@@ -222,7 +223,6 @@ const CreateCurrentSkills = () => {
               placeholder="Skill Type"
               className="w-full p-2 border border-gray-300 rounded"
             />
-           
 
             <Button type="submit" variant="primary" disabled={submitting}>
               {submitting ? "Submitting..." : "Submit"}
@@ -237,20 +237,20 @@ const CreateCurrentSkills = () => {
       {notification && <p className="text-red-500">{notification}</p>}
 
       <div className="mt-6">
-        <h2 className="text-lg font-bold">Existing current Skills</h2>
+        <h2 className="text-lg font-bold">Existing Current Skills</h2>
         {Skills.length === 0 ? (
-          <p>No current Skills found.</p>
+          <p>No current skills found.</p>
         ) : (
-            Skills.map((Skill) => (
-            <div key={Skill.id} className="border p-4 mb-4 rounded">
+          Skills.map((skill) => (
+            <div key={skill.id} className="border p-4 mb-4 rounded">
               <h3 className="font-bold">
                 Skill Name:{" "}
-                <b className="text-primary">{Skill.title}</b>
+                <b className="text-primary">{skill.title}</b>
               </h3>
-              {Skill.imageUrl && (
+              {skill.imageUrl && (
                 <Image
-                  src={Skill.imageUrl}
-                  alt="Project Image"
+                  src={skill.imageUrl}
+                  alt="Skill Image"
                   width={200}
                   height={200}
                   className="rounded-md mb-2"
@@ -258,28 +258,24 @@ const CreateCurrentSkills = () => {
               )}
               <p>
                 Skill Category:{" "}
-                <b className="text-primary">{Skill.SkCategory}</b>
+                <b className="text-primary">{skill.SkCategory}</b>
               </p>
               <p>
-                Skill description:{" "}
-                <b className="text-primary">{Skill.SkDescription}</b>
+                Skill Description:{" "}
+                <b className="text-primary">{skill.SkDescription}</b>
               </p>
               <p>
-              Skill Type: <b className="text-primary">{Skill.SkType}</b>
+                Skill Type: <b className="text-primary">{skill.SkType}</b>
               </p>
 
               <div className="flex space-x-4 mt-2">
-                <Button
-                  onClick={() => openEditDialog(Skill)}
-                  variant="outline"
-                >
+                <Button onClick={() => openEditDialog(skill)} variant="outline">
                   Edit
                 </Button>
                 <Button
-                  onClick={() => openDeleteDialog(Skill.id)}
+                  onClick={() => openDeleteDialog(skill.id)}
                   variant="outline"
-                  className="bg-red-500 text-white hover:bg-red-700 border border-red-700 transition
-                    duration-300"
+                  className="bg-red-500 text-white hover:bg-red-700 border border-red-700 transition duration-300"
                 >
                   Delete
                 </Button>
@@ -289,11 +285,10 @@ const CreateCurrentSkills = () => {
         )}
       </div>
 
-      {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent>
           <DialogTitle>Delete Skill</DialogTitle>
-          <p>Are you sure you want to delete this Skill?</p>
+          <p>Are you sure you want to delete this skill?</p>
           <div className="flex justify-end mt-4">
             <Button
               onClick={() => setIsDeleteDialogOpen(false)}
@@ -304,18 +299,15 @@ const CreateCurrentSkills = () => {
             <Button
               onClick={handleDelete}
               variant="danger"
-              className="bg-red-500 text-white hover:bg-red-700 border border-red-700 transition
-                duration-300"
+              className="bg-red-500 text-white hover:bg-red-700 border border-red-700 transition duration-300"
             >
               Confirm
             </Button>
           </div>
         </DialogContent>
       </Dialog>
-
     </div>
   );
 };
 
 export default CreateCurrentSkills;
-

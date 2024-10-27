@@ -91,7 +91,7 @@ const MyProfile = () => {
     <div className="p-8">
       <h1 className="text-xl font-bold mb-4">My Profile</h1>
 
-      <Dialog>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger>
           <Button variant="outline">Edit Profile</Button>
         </DialogTrigger>
@@ -110,14 +110,13 @@ const MyProfile = () => {
                 className="w-100 p-2 border border-gray-300 rounded"
               />
               {previewImage && (
-                
                 <Image
-                src={previewImage} // Replace with your image path
-          alt="Profile"
-          width={185} // 12rem = 192px
-          height={185}
-          className="rounded-sm w-7 h-7 object-cover absolute right-1"
-        />
+                  src={previewImage}
+                  alt="Profile"
+                  width={185}
+                  height={185}
+                  className="rounded-sm w-7 h-7 object-cover absolute right-1"
+                />
               )}
             </div>
 
@@ -177,7 +176,7 @@ const MyProfile = () => {
               {submitting ? "Updating..." : "Update Profile"}
             </Button>
 
-            <DialogClose>
+            <DialogClose onClick={() => setIsDialogOpen(false)}>
               <Button variant="outline">Close</Button>
             </DialogClose>
           </form>

@@ -1,5 +1,4 @@
-"use client";
-
+"use client"
 import React, { useState, useEffect } from "react";
 import { ref, push, onValue, update, remove } from "firebase/database";
 import Image from "next/image";
@@ -20,6 +19,20 @@ import {
 } from "@/components/ui/dialog";
 import GetEducation from "./GetEducation";
 
+interface EducationData {
+  id: string;
+  title: string;
+  institution: string;
+  startDate: string;
+  endDate: string;
+  SkType: string;
+  SkDescription: string;
+  status: string;
+  learnedTags: string[];
+  imageUrl: string;
+  pdfUrl: string;
+}
+
 const Education = () => {
   const [educationData, setEducationData] = useState({
     title: "",
@@ -34,10 +47,9 @@ const Education = () => {
     pdfUrl: "",
   });
 
-  const [Education, setEducation] = useState<any[]>([]);
+  const [Education, setEducation] = useState<EducationData[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  // const [notification, setNotification] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
@@ -59,14 +71,14 @@ const Education = () => {
       const loadedEducations = data
         ? Object.keys(data).map((key) => ({ id: key, ...data[key] }))
         : [];
-      setEducation(loadedEducations);
+      setEducation(loadedEducations as EducationData[]);
     });
   }, []);
 
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
+    >
   ) => {
     const { name, value } = e.target;
     setEducationData({ ...educationData, [name]: value });
@@ -102,7 +114,7 @@ const Education = () => {
     setLearnedTags(learnedTags.filter((t) => t !== tag));
   };
 
-  const handleEdit = (education: any) => {
+  const handleEdit = (education: EducationData) => {
     setEducationData({
       title: education.title,
       institution: education.institution,
@@ -125,7 +137,6 @@ const Education = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    // setNotification(null);
 
     try {
       let imageUrl = educationData.imageUrl;
@@ -134,7 +145,7 @@ const Education = () => {
       if (imageFile) {
         const imageRef = storageRef(
           storage,
-          `MyEducationsImages/${Date.now()}-${imageFile.name}`,
+          `MyEducationsImages/${Date.now()}-${imageFile.name}`
         );
         await uploadBytes(imageRef, imageFile);
         imageUrl = await getDownloadURL(imageRef);
@@ -143,7 +154,7 @@ const Education = () => {
       if (pdfFile) {
         const pdfRef = storageRef(
           storage,
-          `MyEducationsPDFs/${Date.now()}-${pdfFile.name}`,
+          `MyEducationsPDFs/${Date.now()}-${pdfFile.name}`
         );
         await uploadBytes(pdfRef, pdfFile);
         pdfUrl = await getDownloadURL(pdfRef);
@@ -161,7 +172,7 @@ const Education = () => {
       if (editMode) {
         await update(
           ref(database, `MyEducations/${currentEducationId}`),
-          updatedEducationData,
+          updatedEducationData
         );
       } else {
         await push(educationsRef, updatedEducationData);
@@ -170,7 +181,6 @@ const Education = () => {
       resetForm();
     } catch (error) {
       console.error("Error adding/updating Education:", error);
-      // setNotification("Failed to add/update Education.");
     } finally {
       setSubmitting(false);
     }
@@ -204,11 +214,9 @@ const Education = () => {
       try {
         await remove(ref(database, `MyEducations/${currentEducationId}`));
         setIsDeleteDialogOpen(false);
-        // setNotification("Education entry deleted successfully.");
         resetForm();
       } catch (error) {
         console.error("Error deleting education:", error);
-        // setNotification("Failed to delete education entry.");
       }
     }
   };
@@ -324,7 +332,6 @@ const Education = () => {
             </div>
 
             {/* Type */}
-
             <input
               name="SkType"
               value={educationData.SkType}
@@ -477,9 +484,7 @@ const Education = () => {
         </DialogContent>
       </Dialog>
 
-
       <h1>See Education</h1>
-
       <GetEducation />
     </div>
   );

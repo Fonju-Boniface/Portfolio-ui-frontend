@@ -5,8 +5,25 @@ import { ref, onValue } from "firebase/database";
 import Image from "next/image"; // Use the Next.js Image component
 import { database } from "../../../../firebase"; // Adjust the path as needed
 import Link from "next/link"; // Import Link for navigation
+
+// Define a Project type
+interface Project {
+  id: string;
+  projectName: string;
+  imageUrl?: string; // Optional property
+  descriptionSummary: string;
+  description: string;
+  githubLink: string;
+  liveLink: string;
+  generalTools?: string[];
+  frontendTools?: string[];
+  backendTools?: string[];
+  researchTools?: string[];
+  deploymentTools?: string[];
+}
+
 const GetProjects = () => {
-  const [projects, setProjects] = useState<any[]>([]); // To store multiple projects
+  const [projects, setProjects] = useState<Project[]>([]); // To store multiple projects
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -20,7 +37,7 @@ const GetProjects = () => {
         const loadedProjects = Object.keys(data).map((key) => ({
           id: key,
           ...data[key],
-        }));
+        })) as Project[]; // Cast to Project[]
         setProjects(loadedProjects);
       } else {
         setProjects([]);
@@ -71,16 +88,11 @@ const GetProjects = () => {
             <p>
               Live Link: <b className="text-primary">{project.liveLink}</b>
             </p>
-
             <h3 className="font-bold">
-  
-</h3>
-
-<h3 className="font-bold">
-  <Link href={`/projects/${project.id}`} className="text-primary">
-    Project Name: <b>{project.projectName}</b>
-  </Link>
-</h3>
+              <Link href={`/projects/${project.id}`} className="text-primary">
+                Project Name: <b>{project.projectName}</b>
+              </Link>
+            </h3>
 
             {/* Tags Display by Group */}
             <div className="mt-4">
@@ -110,5 +122,4 @@ const GetProjects = () => {
   );
 };
 
-
-export default GetProjects
+export default GetProjects;
