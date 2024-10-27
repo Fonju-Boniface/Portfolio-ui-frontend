@@ -1,13 +1,10 @@
-
-
 "use client";
 
 import { useState, useEffect } from "react";
-import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 
 const ScrollProgress: React.FC = () => {
   const [scrollPercentage, setScrollPercentage] = useState<number>(0);
-  const [isAtTop, setIsAtTop] = useState<boolean>(true);
+  // const [isAtTop, setIsAtTop] = useState<boolean>(true);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -18,14 +15,13 @@ const ScrollProgress: React.FC = () => {
       const percentScrolled = (scrollPosition / scrollHeight) * 100;
       setScrollPercentage(percentScrolled);
 
+      // Uncomment this if you plan to use isAtTop in the future
       // setIsAtTop(scrollPosition === 0);
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  
 
   return (
     <div>
@@ -36,8 +32,6 @@ const ScrollProgress: React.FC = () => {
           style={{ width: `${scrollPercentage}%` }}
         ></div>
       </div>
-
-     
     </div>
   );
 };

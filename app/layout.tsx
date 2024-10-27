@@ -7,7 +7,7 @@ import ThemeDataProvider from "@/context/theme-data-provider";
 import SideBar from "./components/navbars/sidebar";
 import Profile from "./components/navbars/profile";
 import TopNav from "./components/navbars/topnav";
-import { ToastContainer, toast } from "react-toastify"; // Import ToastContainer and toast
+import { ToastContainer } from "react-toastify"; // Import ToastContainer and toast
 import "react-toastify/dist/ReactToastify.css"; // Import the default styles
 import { metadata } from "./layoutMetadata"; // Correctly import the metadata
 import Dialog from "./Dialog";

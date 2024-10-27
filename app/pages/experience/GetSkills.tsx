@@ -14,7 +14,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog"; // Import Shadcn dialog components
-import { Eye, Plus } from "lucide-react";
+import { Eye } from "lucide-react";
 
 interface Skill {
   id: string;
