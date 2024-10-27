@@ -38,16 +38,14 @@ export default function RootLayout({
     setIsVisibleS(!isVisibleS);
   };
 
-  // Example function to show a toast
-  const showToast = () => {
-    toast.success("This is a success message!"); // Adjust the message and type as needed
-  };
+  
 
   return (
     <html lang="en">
       <head>
-      <title>{metadata.title ?? "Loced code"}</title>
+      <title>{metadata.title ?? "Locked Code"}</title>
 <meta name="description" content={metadata.description ?? "Default Description"} />
+
 
         {/* Add more metadata as needed */}
         
