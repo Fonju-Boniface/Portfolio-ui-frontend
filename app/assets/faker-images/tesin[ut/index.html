@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <label for="file-input">Choose a file:</label>
+    <input type="file" id="file-input" name="file-input" accept="image/*">
+    
+    <div id="image-preview-container" style="display: none;">
+      <h3>Preview:</h3>
+      <img id="preview-image" src="" alt="Uploaded Image">
+    </div>
+    
+    <script>
+      document.getElementById('file-input').addEventListener('change', function() {
+        var file = this.files[0];
+        if (file && file.type.startsWith('image/')) {
+          var imagePreviewContainer = document.getElementById('image-preview-container');
+          imagePreviewContainer.style.display = 'block';
+    
+          var previewImage = document.getElementById('preview-image');
+          previewImage.src = URL.createObjectURL(file);
+        } else {
+          alert('Please select an image file.');
+        }
+      });
+    </script>
+</body>
+</html>
