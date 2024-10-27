@@ -46,8 +46,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <title>{metadata.title}</title>
-        <meta name="description" content={metadata.description} />
+      <title>{metadata.title ?? "Loced code"}</title>
+<meta name="description" content={metadata.description ?? "Default Description"} />
+
         {/* Add more metadata as needed */}
         
 <Script
