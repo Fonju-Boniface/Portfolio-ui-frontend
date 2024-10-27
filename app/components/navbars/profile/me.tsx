@@ -5,7 +5,6 @@ import Image from "next/image"; // Import the Next.js Image component
 import { Input } from "@/components/ui/input"; // Shadcn Input component
 import { Copy } from "lucide-react"; // Import Copy icon from lucide-react
 import { toast } from "react-toastify"; // Import toast from react-toastify
-import DownResume from "./DownResume";
 
 import { useState, useEffect } from "react";
 import { ref, onValue } from "firebase/database";

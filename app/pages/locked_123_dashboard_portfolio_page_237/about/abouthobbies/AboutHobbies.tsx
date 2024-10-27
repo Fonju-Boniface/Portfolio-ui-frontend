@@ -3,8 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { ref, onValue } from 'firebase/database';
 import { database } from "../../../../firebase"; // Adjust the path as needed
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogClose } from "@/components/ui/dialog"; // Import Shadcn dialog components
 
 const AboutHobbies = () => {
     const [hobbies, setHobbies] = useState<{ [key: string]: { name: string; iconName: string; text: string } }>({});

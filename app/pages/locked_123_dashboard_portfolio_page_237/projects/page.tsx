@@ -18,7 +18,6 @@ import {
   DialogTitle,
   DialogClose,
 } from "@/components/ui/dialog"; // Import Shadcn dialog components
-import GetProjects from "./projects";
 
 const Projects = () => {
   const [projectData, setProjectData] = useState({

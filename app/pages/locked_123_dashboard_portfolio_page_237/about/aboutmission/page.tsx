@@ -5,7 +5,6 @@ import { ref, push, set, onValue, remove } from "firebase/database"; // Import r
 import { database } from "../../../../firebase"; // Adjust the path as needed
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogClose } from "@/components/ui/dialog"; // Import Shadcn dialog components
-import AboutMiss from "./AboutMiss";
 
 const AboutMission = () => {
     const [data, setData] = useState<{ [key: string]: { name: string; iconName: string; text: string } }>({});
@@ -46,7 +45,7 @@ const AboutMission = () => {
                 setEditId(null);
                 setIsDialogOpen(false);
             } catch (error) {
-                setNotification('Failed to update data.');
+                setNotification('Failed to update data.'+error);
             } finally {
                 setSubmitting(false);
             }
@@ -65,7 +64,7 @@ const AboutMission = () => {
             setEditData({ name: '', iconName: '', text: '' });
             setIsDialogOpen(false);
         } catch (error) {
-            setNotification('Failed to add data.');
+            setNotification('Failed to add data.'+error);
         } finally {
             setSubmitting(false);
         }
@@ -78,7 +77,7 @@ const AboutMission = () => {
                 await remove(itemRef);
                 setNotification('Item deleted successfully!');
             } catch (error) {
-                setNotification('Failed to delete item.');
+                setNotification('Failed to delete item.'+error);
             }
         }
     };

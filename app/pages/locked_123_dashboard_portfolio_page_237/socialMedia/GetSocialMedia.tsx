@@ -41,7 +41,7 @@ const GetSocialMedia = () => {
         <p className="text-center">No Social Media data found.</p>
       ) : (
         <div className=" flex justify-center items-center flex-wrap gap-4 mt-8 w-full">
-          {educationData.map((education, index) => (
+          {educationData.map((education) => (
             <div
               key={education.id}
               className="mb-8 flex flex-col justify-center items-center relative p-2 rounded-md w-full

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ref, get, set, update } from "firebase/database";
+import { ref, get, update } from "firebase/database";
 import {
   getStorage,
   ref as storageRef,

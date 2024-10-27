@@ -12,14 +12,10 @@ import {
   User,
   Phone,
   GraduationCap,
-  Image,
-  Settings,
   Globe,
-  FileText,
 } from "lucide-react"; // Import X (close) and Menu (bars) icons
 import Link from "next/link";
 import { usePathname } from "next/navigation"; // Import usePathname from next/navigation
-import clsx from "clsx"; // Import clsx for conditional classes
 import Progress from "@/app/pages/test2/ScrollProgressBar/Progress";
 
 // Define an array of links
@@ -84,14 +80,12 @@ const links = [
 
 const SideBar = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const [isVisibleS, setIsVisibleS] = useState(true);
   // const [isVisibleT, setIsVisibleS] = useState(true);
   const pathname = usePathname(); // Get the current pathname using Next.js' usePathname
 
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
   };
-  
 
   // Function to check if the current path is active
   const isActive = (path: string) => pathname === path;
@@ -99,17 +93,15 @@ const SideBar = () => {
   return (
     <>
       <div
-        className={` h-full flex justify-center  items-end transition-all pb-[3rem] sm:pb-0 
-        ${isVisible ? "w-[15rem]" : "w-[3rem]"} ` }
+        className={`h-full flex justify-center items-end transition-all pb-[3rem] sm:pb-0
+        ${isVisible ? "w-[15rem]" : "w-[3rem]"}`}
       >
         {/* Sidebar toggler */}
-        <div className="flex justify-center items-center h-[3rem] w-[100%] absolute top-0 pb-1" onClick={toggleVisibility}>
-          <Button
-            variant="outline"
-            size="icon"
-           
-            className="relative"
-          >
+        <div
+          className="flex justify-center items-center h-[3rem] w-[100%] absolute top-0 pb-1"
+          onClick={toggleVisibility}
+        >
+          <Button variant="outline" size="icon" className="relative">
             {isVisible ? (
               <X
                 className="h-[1.2rem] w-[1.2rem] rotate-90 scale-100 transition-all duration-300
@@ -132,7 +124,7 @@ const SideBar = () => {
         {/* Links */}
         <div
           className="flex justify-start items-center flex-col h-[calc(100%-4rem)] overflow-y-auto
-            scrollbar-hide "
+            scrollbar-hide"
         >
           {links.map((link, index) => (
             <Link
@@ -161,9 +153,12 @@ const SideBar = () => {
               )}
             </Link>
           ))}
-          <div className=" fixed sm:absolute left-[-100%] bottom-1 sm:left-0 z-[10000] flex justify-center items-end h-[3rem] w-[3rem]">
-                <Progress />
-              </div>
+          <div
+            className="fixed sm:absolute left-[-100%] bottom-1 sm:left-0 z-[10000] flex justify-center
+              items-end h-[3rem] w-[3rem]"
+          >
+            <Progress />
+          </div>
         </div>
       </div>
     </>

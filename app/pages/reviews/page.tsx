@@ -22,7 +22,6 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { database } from "../../firebase";
-import Image from "next/image";
 import toast from "react-hot-toast";
 import GetRatingMain from "../locked_123_dashboard_portfolio_page_237/rating/GetRatingMain";
 // import GetRatingMain from "./GetRatingMain";

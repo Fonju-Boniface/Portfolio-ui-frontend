@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getDatabase, ref, onValue } from 'firebase/database';
 import { app } from '../../../firebase';
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 
 const GetEducation = () => {
@@ -40,7 +39,7 @@ const GetEducation = () => {
         <p className="text-center">No education data found.</p>
       ) : (
         <div className="relative  grid grid-cols-1 gap-4 mt-8">
-          {educationData.map((education, index) => (
+          {educationData.map((education) => (
             <div
               key={education.id}
               className="mb-8 flex flex-col relative sm:p-2 rounded-md"

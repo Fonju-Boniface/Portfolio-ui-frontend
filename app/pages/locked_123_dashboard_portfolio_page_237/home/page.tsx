@@ -111,7 +111,7 @@ const MyHome = () => {
       setImageFile(null); // Reset file input
       setIsDialogOpen(false); // Close the dialog after successful submission
     } catch (error) {
-      setNotification("Failed to update Home.");
+      setNotification("Failed to update Home."+error);
     } finally {
       setSubmitting(false);
     }

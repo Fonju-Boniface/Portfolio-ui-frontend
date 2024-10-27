@@ -58,7 +58,7 @@ const About = () => {
         setEditId(null);
         setIsDialogOpen(false);
       } catch (error) {
-        setNotification("Failed to update data.");
+        setNotification("Failed to update data."+error);
       } finally {
         setSubmitting(false);
       }
@@ -77,7 +77,7 @@ const About = () => {
       setEditData({ name: "", iconName: "", text: "" });
       setIsDialogOpen(false);
     } catch (error) {
-      setNotification("Failed to add data.");
+      setNotification("Failed to add data."+error);
     } finally {
       setSubmitting(false);
     }
@@ -93,7 +93,7 @@ const About = () => {
       await remove(itemRef);
       setNotification("Data deleted successfully!");
     } catch (error) {
-      setNotification("Failed to delete data.");
+      setNotification("Failed to delete data."+error);
     } finally {
       setSubmitting(false);
     }

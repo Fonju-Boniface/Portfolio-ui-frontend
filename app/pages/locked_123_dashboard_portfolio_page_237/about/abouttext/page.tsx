@@ -36,7 +36,7 @@ const AboutText = () => {
             await set(textRef, text);
             setNotification('Text updated successfully!');
         } catch (error) {
-            setNotification('Failed to update text.');
+            setNotification('Failed to update text.'+error);
         } finally {
             setSubmitting(false);
             setIsDialogOpen(false);

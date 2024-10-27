@@ -6,20 +6,9 @@ import { FullscreenModeToggle } from "@/app/components/navbars/profile/Fullscree
 import Me from "./me";
 import DownResume from "./DownResume";
 
-import {
-  X,
-  Menu,
-  UserPlus,
-} from "lucide-react"; 
-import { Button } from "@/components/ui/button";
 
 const Profile = () => {
-  const [isVisible, setIsVisible] = useState(false);
-  // shadow
-  const toggleVisibility = () => {
-    // setIsVisibleS(!isVisibleS);
-    setIsVisible(!isVisible);
-  };
+ 
   return (
     <>
  

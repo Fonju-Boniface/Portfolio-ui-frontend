@@ -3,7 +3,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button"; // Import the Shadcn Button component
 import { Github, Linkedin, Twitter } from "lucide-react"; // Import icons from lucide-react
-import { clsx } from "clsx"; // Optional: for conditional class names
 
 // Define an array of social media links
 const socialLinks = [

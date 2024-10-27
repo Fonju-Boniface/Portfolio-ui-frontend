@@ -3,7 +3,6 @@ import React from "react";
 import Exp from "./Exp";
 import Summary from "./Summary";
 import Skills from "./Skills";
-import CurrentlyLearning from "./CurrentlyLearning";
 import GetCurrentSkills from "./GetCurrentSkills";
 const Experience = () => {
   return (

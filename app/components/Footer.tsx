@@ -1,9 +1,6 @@
 import React from "react";
 // import React from 'react';
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Facebook, Instagram, Linkedin, Twitter } from "lucide-react";
-import { FaFacebook, FaInstagram, FaTwitter } from "react-icons/fa";
 import DownResume from "./navbars/profile/DownResume";
 
 const Footer = () => {

@@ -1,10 +1,8 @@
 import React from 'react';
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
   DialogTitle,
-  DialogClose,
   DialogDescription,
   DialogOverlay
 } from "@/components/ui/dialog"; // Import Shadcn dialog components

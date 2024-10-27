@@ -1,11 +1,9 @@
 "use client";
 
-import {  Gamepad2, Globe, Code } from 'lucide-react';
 import AboutMiss from '../locked_123_dashboard_portfolio_page_237/about/aboutmission/AboutMiss';
 import AboutTextField from '../locked_123_dashboard_portfolio_page_237/about/abouttext/AboutTextField';
 import AboutHobbies from '../locked_123_dashboard_portfolio_page_237/about/abouthobbies/AboutHobbies';
-import ToggleButton from '../test1/page';
-import AnotherPage from '../test2/page';
+
 
 export default function AboutPage() {
   return (

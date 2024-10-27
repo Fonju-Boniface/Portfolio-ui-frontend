@@ -37,7 +37,7 @@ const Education = () => {
   const [Education, setEducation] = useState<any[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [notification, setNotification] = useState<string | null>(null);
+  // const [notification, setNotification] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
@@ -125,7 +125,7 @@ const Education = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    setNotification(null);
+    // setNotification(null);
 
     try {
       let imageUrl = educationData.imageUrl;
@@ -170,7 +170,7 @@ const Education = () => {
       resetForm();
     } catch (error) {
       console.error("Error adding/updating Education:", error);
-      setNotification("Failed to add/update Education.");
+      // setNotification("Failed to add/update Education.");
     } finally {
       setSubmitting(false);
     }
@@ -204,11 +204,11 @@ const Education = () => {
       try {
         await remove(ref(database, `MyEducations/${currentEducationId}`));
         setIsDeleteDialogOpen(false);
-        setNotification("Education entry deleted successfully.");
+        // setNotification("Education entry deleted successfully.");
         resetForm();
       } catch (error) {
         console.error("Error deleting education:", error);
-        setNotification("Failed to delete education entry.");
+        // setNotification("Failed to delete education entry.");
       }
     }
   };

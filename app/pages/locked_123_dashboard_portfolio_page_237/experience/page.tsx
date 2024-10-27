@@ -2,11 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import { database } from "../../../firebase"; // Adjust the path to your Firebase setup
-import { ref, set, update, onValue } from "firebase/database";
+import { ref, set, onValue } from "firebase/database";
 import { Button } from "@/components/ui/button"; // Replace with your Shadcn button
 import { Input } from "@/components/ui/input"; // Replace with your Shadcn input
-import CreateSkills from "./CreateSkills";
-import GetSkills from "./GetSkills";
+
 
 const ExperienceSummaryForm = () => {
   const [years, setYears] = useState<string>("");
