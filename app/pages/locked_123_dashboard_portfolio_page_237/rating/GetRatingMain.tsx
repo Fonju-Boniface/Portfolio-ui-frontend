@@ -55,7 +55,6 @@ const GetRatingMain = () => {
             <CarouselContent className="w-full">
               {ratings.map((rating) => (
                 <CarouselItem key={rating.id}>
-                  
                     <Card className="w-full">
                       <CardContent className="flex aspect-square items-center flex-col justify-center p-1 px-2 gap-1 text-center ">
                         <Image
@@ -67,10 +66,7 @@ const GetRatingMain = () => {
                         />
                         <h3 className=" uppercase mt-3">{rating.name}</h3>
                         <p className="text-primary font-bold">I'm a {rating.profession}</p>
-
                         <p className=" text-center">{rating.description}</p>
-
-
                         <ReactStars
                 count={5}
                 size={24}
@@ -86,33 +82,6 @@ const GetRatingMain = () => {
             <CarouselPrevious />
             <CarouselNext />
           </Carousel>
-
-          {/* {ratings.map((rating) => (
-            <li key={rating.id} className="my-2 p-2 border rounded shadow">
-              <img
-                src={rating.imageUrl}
-                alt={rating.name}
-                className="h-16 w-16 rounded-full"
-              />
-              <h3>{rating.name}</h3>
-              <p>Email: {rating.email}</p>
-              
-             =
-              <p>Profession: {rating.profession}</p>
-              
-              <p>Description: {rating.description}</p>
-              
-              <p>Rating: {rating.rating} stars</p>
-              <p>Review: {rating.review}</p>
-              <ReactStars
-                count={5}
-                size={24}
-                activeColor="#ffd700"
-                value={rating.rating} // Use the rating value for ReactStars
-                edit={false} // Prevent editing if you just want to display
-              />
-            </li>
-          ))} */}
         </>
       ) : (
         <p>No ratings available.</p>

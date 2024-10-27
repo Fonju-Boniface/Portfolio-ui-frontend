@@ -17,7 +17,7 @@ import { useState } from "react";
 import Progress from "./pages/test2/ScrollProgressBar/Progress";
 import ScrollProgress from "./ScrollProgress";
 import Footer from "./components/Footer";
-
+import Script from "next/script";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({
@@ -49,12 +49,14 @@ export default function RootLayout({
         <title>{metadata.title}</title>
         <meta name="description" content={metadata.description} />
         {/* Add more metadata as needed */}
-        <script
-          src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"
-          integrity="sha512-6sSYJqDreZRZGkJ3b+YfdhB3MzmuP9R7X1QZ6g5aIXhRvR1Y/N/P47jmnkENm7YL3oqsmI6AK+V6AD99uWDnIw=="
-          crossOrigin="anonymous"
-          referrerPolicy="no-referrer"
-        ></script>
+        
+<Script
+  src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"
+  integrity="sha512-6sSYJqDreZRZGkJ3b+YfdhB3MzmuP9R7X1QZ6g5aIXhRvR1Y/N/P47jmnkENm7YL3oqsmI6AK+V6AD99uWDnIw=="
+  crossOrigin="anonymous"
+  referrerPolicy="no-referrer"
+  strategy="afterInteractive"
+/>
       </head>
       <body
         className={`${inter.className} w-[100%] flex justify-end items-end relative`}
