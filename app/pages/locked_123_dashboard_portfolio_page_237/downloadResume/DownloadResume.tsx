@@ -97,7 +97,7 @@ const DownloadResume = () => {
               onChange={handleFileChange}
               className="w-full p-2 border border-gray-300 rounded"
             />
-            <Button type="submit" variant="primary" disabled={submitting}>
+            <Button type="submit" variant="outline" className="bg-primary" disabled={submitting}>
               {submitting ? "Uploading..." : "Submit"}
             </Button>
             <DialogClose asChild>
