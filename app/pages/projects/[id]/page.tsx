@@ -1,4 +1,4 @@
-'use client'; // Add this line at the top to declare the component as a client component
+'use client'; // Ensure this is at the top of your file
 
 import React, { useEffect, useState } from "react";
 import { ref, onValue } from "firebase/database";
@@ -7,7 +7,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { GithubIcon, Globe } from "lucide-react";
-import { GetServerSideProps } from 'next';
 
 // Define a type for the project data
 type Project = {
@@ -151,16 +150,6 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ params }) => {
       </div>
     </div>
   );
-};
-
-// Use getServerSideProps to fetch data and pass params correctly
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { params } = context;
-  return {
-    props: {
-      params: { id: params?.id as string }, // Ensure the id is a string
-    },
-  };
 };
 
 export default ProjectDetails;
