@@ -1,11 +1,11 @@
-"use client"
 import React, { useEffect, useState } from "react";
 import { ref, onValue } from "firebase/database";
 import { database } from "../../../firebase"; // Adjust the path as needed
-import Image from "next/image"; // Use the Next.js Image component
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { GithubIcon, Globe } from "lucide-react";
+import { GetServerSideProps } from 'next';  // Import GetServerSideProps
 
 // Define a type for the project data
 type Project = {
@@ -30,6 +30,7 @@ type ProjectDetailsProps = {
   };
 };
 
+// Update your component to use the NextPage type
 const ProjectDetails: React.FC<ProjectDetailsProps> = ({ params }) => {
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
@@ -148,6 +149,16 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ params }) => {
       </div>
     </div>
   );
+};
+
+// Use getServerSideProps to fetch data and pass params correctly
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { params } = context;
+  return {
+    props: {
+      params: { id: params?.id as string }, // Ensure the id is a string
+    },
+  };
 };
 
 export default ProjectDetails;
