@@ -1,4 +1,5 @@
 // components/ScrollIndicator.tsx
+"use client"
 import { useEffect, useState } from 'react';
 
 const ScrollIndicator = () => {

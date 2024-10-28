@@ -1,3 +1,4 @@
+"use client"
 import React, { useState } from 'react';
 import Image from 'next/image';
 import CustomDialog from './Dialog'; // Updated import for the dialog
