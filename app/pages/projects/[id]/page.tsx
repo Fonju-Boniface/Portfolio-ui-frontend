@@ -1,4 +1,4 @@
-'use client'; // Ensure this is at the top of your file
+"use client";
 
 import React, { useEffect, useState } from "react";
 import { ref, onValue } from "firebase/database";
@@ -25,13 +25,11 @@ type Project = {
 };
 
 // Define a type for the props
-type ProjectDetailsProps = {
-  params: {
-    id: string;
-  };
-};
+interface ProjectDetailsProps {
+  params: { id: string };
+}
 
-// Update your component to use the NextPage type
+// Update your component to use React.FC
 const ProjectDetails: React.FC<ProjectDetailsProps> = ({ params }) => {
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
