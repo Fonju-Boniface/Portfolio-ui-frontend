@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { ref, onValue } from "firebase/database";
 import { database } from "../../../firebase"; // Adjust the path as needed
@@ -24,7 +22,14 @@ type Project = {
   deploymentTools?: string[];
 };
 
-const ProjectDetails = ({ params }: { params: { id: string } }) => {
+// Define a type for the props
+type ProjectDetailsProps = {
+  params: {
+    id: string;
+  };
+};
+
+const ProjectDetails: React.FC<ProjectDetailsProps> = ({ params }) => {
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -50,7 +55,7 @@ const ProjectDetails = ({ params }: { params: { id: string } }) => {
           console.error("Error fetching project details:", error);
           setError("Failed to load project details.");
           setLoading(false);
-        },
+        }
       );
 
       // Cleanup subscription on unmount
