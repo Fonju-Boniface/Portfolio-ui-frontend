@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Select from "react-select";
@@ -31,6 +29,18 @@ type CountryOption = {
   flag: string;
   code: string; // Telephone code
 };
+
+interface CountryData {
+  name: {
+    common: string;
+  };
+  flag: string;
+  cca2: string;
+  idd: {
+    root: string;
+    suffixes?: string[];
+  };
+}
 
 interface Rating {
   id?: string;
@@ -73,9 +83,9 @@ const GetRating = () => {
 
   useEffect(() => {
     axios
-      .get("https://restcountries.com/v3.1/all")
+      .get<CountryData[]>("https://restcountries.com/v3.1/all")
       .then((response) => {
-        const countryData = response.data.map((country: any) => ({
+        const countryData = response.data.map((country) => ({
           label: `${country.flag} ${country.name.common}`,
           value: country.cca2,
           flag: country.flag,
@@ -408,6 +418,20 @@ const GetRating = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Display Ratings */}
+      {ratings.length > 0 && (
+        <div>
+          <h2>Ratings List</h2>
+          <ul>
+            {ratings.map((rating) => (
+              <li key={rating.id}>
+                {rating.name} - {rating.rating} stars
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <GetRatingMain />
     </div>

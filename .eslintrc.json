@@ -1,14 +1,7 @@
 {
-  "extends": [
-    "next",
-    "next/core-web-vitals",
-    "plugin:@typescript-eslint/recommended"
-  ],
-  "plugins": ["@typescript-eslint"],
-  "parser": "@typescript-eslint/parser",
+  "extends": "next",
   "rules": {
-    "@typescript-eslint/no-unused-vars": "warn",
-    "react/no-unescaped-entities": "off",  // Disable specific rule
-    "@next/next/no-page-custom-font": "off" // Disable another specific rule
+    "react/no-unescaped-entities": "off",
+    "@next/next/no-page-custom-font": "off"
   }
 }

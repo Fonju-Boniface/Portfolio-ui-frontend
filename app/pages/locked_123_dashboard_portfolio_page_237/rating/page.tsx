@@ -33,6 +33,21 @@ type CountryOption = {
   code: string; // Telephone code
 };
 
+type Country = {
+  name: {
+    common: string;
+    official: string;
+  };
+  cca2: string; // 2-letter country code
+  ccn3: string; // 3-digit country code
+  cca3: string; // 3-letter country code
+  idd: {
+    root: string;
+    suffixes: string[];
+  };
+  flag: string;
+};
+
 type Rating = {
   id: string;
   name: string;
@@ -80,7 +95,7 @@ const RatingForm = () => {
     axios
       .get("https://restcountries.com/v3.1/all")
       .then((response) => {
-        const countryData = response.data.map((country: any) => ({
+        const countryData = response.data.map((country: Country) => ({
           label: `${country.flag} ${country.name.common}`,
           value: country.cca2,
           flag: country.flag,

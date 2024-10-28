@@ -1,5 +1,4 @@
-"use client";
-
+"use client"
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Select from "react-select";
@@ -30,6 +29,16 @@ interface CountryOption {
   value: string;
   flag: string;
   code: string; // Telephone code
+}
+
+interface Country {
+  name: { common: string };
+  flag: string;
+  cca2: string;
+  idd: {
+    root: string;
+    suffixes?: string[];
+  };
 }
 
 interface Rating {
@@ -66,7 +75,6 @@ const GetRating = () => {
   const [description, setDescription] = useState<string>("");
   const [myContribution, setMyContribution] = useState<string>("");
   const [loading, setLoading] = useState(false);
-  const [ratings, setRatings] = useState<Rating[]>([]);
   const [ratingToDelete, setRatingToDelete] = useState<string | null>(null);
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
   const [ratingToUpdate, setRatingToUpdate] = useState<Rating | null>(null);
@@ -79,9 +87,9 @@ const GetRating = () => {
   useEffect(() => {
     // Fetch country data
     axios
-      .get("https://restcountries.com/v3.1/all")
+      .get<Country[]>("https://restcountries.com/v3.1/all")
       .then((response) => {
-        const countryData = response.data.map((country: any) => ({
+        const countryData = response.data.map((country) => ({
           label: `${country.flag} ${country.name.common}`,
           value: country.cca2,
           flag: country.flag,
@@ -104,7 +112,7 @@ const GetRating = () => {
       const loadedRatings = data
         ? Object.entries(data).map(([id, rating]) => ({ id, ...rating }))
         : [];
-      setRatings(loadedRatings);
+      // If ratings state is not needed, you can remove this line
     });
   }, []);
 

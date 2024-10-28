@@ -81,7 +81,7 @@ const MyProfile = () => {
       setImageFile(null); // Reset file input
       setIsDialogOpen(false); // Close the dialog after successful submission
     } catch (error) {
-      setNotification("Failed to update profile.");
+      setNotification("Failed to update profile."+error);
     } finally {
       setSubmitting(false);
     }

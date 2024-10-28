@@ -123,8 +123,10 @@ const SocialMedia = () => {
           ref(database, `MySocialMedias/${currentEducationId}`),
           updatedEducationData
         );
+        setNotification("Social Media updated successfully."); // Set notification
       } else {
         await push(educationsRef, updatedEducationData);
+        setNotification("Social Media added successfully."); // Set notification
       }
 
       resetForm();
@@ -166,6 +168,13 @@ const SocialMedia = () => {
   return (
     <div className="p-8">
       <h1 className="text-xl font-bold mb-4">My Social Medias</h1>
+
+      {/* Display Notification */}
+      {notification && (
+        <div className="mb-4 p-2 bg-green-100 text-green-800 border border-green-300 rounded">
+          {notification}
+        </div>
+      )}
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger>

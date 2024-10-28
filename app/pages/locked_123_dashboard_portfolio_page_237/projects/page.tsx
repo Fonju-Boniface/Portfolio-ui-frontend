@@ -51,12 +51,12 @@ const Projects = () => {
     deploymentTools: [],
   });
 
-  const [projects, setProjects] = useState<Project[]>([]); // Updated to use the Project type
+  const [projects, setProjects] = useState<Project[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [imageFile, setImageFile] = useState<File | null>(null); // Store the file to be uploaded
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [tagInput, setTagInput] = useState("");
   const [selectedToolGroup, setSelectedToolGroup] = useState<
     | "generalTools"
@@ -70,10 +70,9 @@ const Projects = () => {
   const [currentProjectId, setCurrentProjectId] = useState<string | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  const storage = getStorage(); // Firebase storage instance
+  const storage = getStorage();
 
   useEffect(() => {
-    // Fetch existing projects from Firebase
     const projectsRef = ref(database, "MyProjects");
     onValue(projectsRef, (snapshot) => {
       const data = snapshot.val();
@@ -123,17 +122,14 @@ const Projects = () => {
       const updatedProjectData = { ...projectData, imageUrl };
       const projectsRef = ref(database, "MyProjects");
       if (editMode) {
-        // Update existing project
         await update(
           ref(database, `MyProjects/${currentProjectId}`),
           updatedProjectData,
         );
       } else {
-        // Add new project
         await push(projectsRef, updatedProjectData);
       }
 
-      // Resetting state and closing the dialog...
       resetForm();
     } catch (error) {
       console.error("Error adding/updating project:", error);
@@ -211,6 +207,17 @@ const Projects = () => {
     }
   };
 
+  // New handler for tool group selection
+  const handleToolGroupChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedToolGroup(e.target.value as
+      | "generalTools"
+      | "frontendTools"
+      | "backendTools"
+      | "researchTools"
+      | "deploymentTools"
+    );
+  };
+
   return (
     <div className="p-8">
       <h1 className="text-xl font-bold mb-4">My Projects</h1>
@@ -237,9 +244,9 @@ const Projects = () => {
               />
               {previewImage && (
                 <Image
-                  src={previewImage} // Replace with your image path
+                  src={previewImage}
                   alt="Project"
-                  width={185} // 12rem = 192px
+                  width={185}
                   height={185}
                   className="rounded-sm w-7 h-7 object-cover absolute right-1"
                 />
@@ -290,7 +297,7 @@ const Projects = () => {
             <div className="flex space-x-2">
               <select
                 value={selectedToolGroup}
-                onChange={handleToolGroupChange} // Updated to call the new function
+                onChange={handleToolGroupChange} // Use the handler here
                 className="flex-grow p-2 border border-gray-300 rounded"
               >
                 <option value="generalTools">General Tools</option>
