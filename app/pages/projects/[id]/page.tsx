@@ -1,4 +1,4 @@
-"use client";
+'use client'; // Ensure this is at the top of your file
 
 import React, { useEffect, useState } from "react";
 import { ref, onValue } from "firebase/database";
@@ -7,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { GithubIcon, Globe } from "lucide-react";
+import { useParams } from 'next/navigation'; // Import useParams hook
 
 // Define a type for the project data
 type Project = {
@@ -24,18 +25,12 @@ type Project = {
   deploymentTools?: string[];
 };
 
-// Define a type for the props
-interface ProjectDetailsProps {
-  params: { id: string };
-}
-
-// Update your component to use React.FC
-const ProjectDetails: React.FC<ProjectDetailsProps> = ({ params }) => {
+const ProjectDetails = () => {
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const { id } = params; // Access the dynamic route parameter
+  const { id } = useParams(); // Use useParams to get the dynamic route parameter
 
   useEffect(() => {
     if (id) {
