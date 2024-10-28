@@ -1,3 +1,5 @@
+'use client'; // Add this line at the top to declare the component as a client component
+
 import React, { useEffect, useState } from "react";
 import { ref, onValue } from "firebase/database";
 import { database } from "../../../firebase"; // Adjust the path as needed
@@ -5,7 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { GithubIcon, Globe } from "lucide-react";
-import { GetServerSideProps } from 'next';  // Import GetServerSideProps
+import { GetServerSideProps } from 'next';
 
 // Define a type for the project data
 type Project = {
