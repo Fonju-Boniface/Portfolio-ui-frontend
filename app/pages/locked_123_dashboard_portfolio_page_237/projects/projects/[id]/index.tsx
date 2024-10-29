@@ -20,6 +20,7 @@ interface Project {
   backendTools?: string[];
   researchTools?: string[];
   deploymentTools?: string[];
+  [key: string]: any; // Index signature
 }
 
 const ProjectDetails = () => {
@@ -84,24 +85,24 @@ const ProjectDetails = () => {
       </p>
       {/* Tags Display by Group */}
       <div className="mt-4">
-        {["generalTools", "frontendTools", "backendTools", "researchTools", "deploymentTools"].map((group) => (
-          <div key={group}>
-            <h4 className="font-semibold">{group.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:</h4>
-            <div className="flex flex-wrap">
-              {Array.isArray(project[group]) && project[group].length > 0 ? (
-                project[group].map((tag) => (
-                  <span key={tag} className="bg-blue-500 text-white rounded-full px-2 py-1 m-1">
-                    {tag}
-                  </span>
-                ))
-              ) : (
-                <span className="text-gray-500">
-                  No {group.replace(/([A-Z])/g, ' $1').toLowerCase()} used for this project.
-                </span>
-              )}
-            </div>
-          </div>
-        ))}
+      {["generalTools", "frontendTools", "backendTools", "researchTools", "deploymentTools"].map((group) => (
+  <div key={group}>
+    <h4 className="font-semibold">{group.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:</h4>
+    <div className="flex flex-wrap">
+      {Array.isArray(project[group]) && project[group].length > 0 ? (
+        project[group].map((tag) => (
+          <span key={tag} className="bg-blue-500 text-white rounded-full px-2 py-1 m-1">
+            {tag}
+          </span>
+        ))
+      ) : (
+        <span className="text-gray-500">
+          No {group.replace(/([A-Z])/g, ' $1').toLowerCase()} used for this project.
+        </span>
+      )}
+    </div>
+  </div>
+))}
       </div>
     </div>
   );
