@@ -106,8 +106,12 @@ const GetRating = () => {
     onValue(ratingsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedRatings = data
-        ? Object.entries(data).map(([id, rating]) => ({ id, ...rating })) as Rating[]
-        : [];
+  ? Object.entries(data).map(([id, rating]) => 
+      typeof rating === 'object' && rating !== null 
+        ? { id, ...rating } 
+        : { id } // or handle the case where rating is not valid
+    ) as Rating[]
+  : [];
       setRatings(loadedRatings);
     });
   }, []);
