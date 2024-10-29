@@ -35,6 +35,7 @@ interface EducationData {
 
 const Education = () => {
   const [educationData, setEducationData] = useState({
+    id: "",
     title: "",
     institution: "",
     startDate: "",
@@ -116,7 +117,8 @@ const Education = () => {
 
   const handleEdit = (education: EducationData) => {
     setEducationData({
-      title: education.title,
+    id: education.id,
+    title: education.title,
       institution: education.institution,
       startDate: education.startDate,
       endDate: education.endDate,
@@ -188,7 +190,8 @@ const Education = () => {
 
   const resetForm = () => {
     setEducationData({
-      title: "",
+    id: "",
+    title: "",
       institution: "",
       startDate: "",
       endDate: "",

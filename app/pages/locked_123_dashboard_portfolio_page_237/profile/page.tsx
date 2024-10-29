@@ -17,6 +17,7 @@ import GetProfile from "./getProfile";
 
 const MyProfile = () => {
   const [profileData, setProfileData] = useState({
+    id: "",
     imageUrl: "",
     name: "",
     profession: "",

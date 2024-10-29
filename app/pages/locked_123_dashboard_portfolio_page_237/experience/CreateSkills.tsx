@@ -32,6 +32,7 @@ interface Skill {
 
 const CreateSkills = () => {
   const [skillData, setSkillData] = useState<Skill>({
+    id: "",
     title: "",
     SkDescription: "",
     SkCategory: "",
@@ -122,7 +123,8 @@ const CreateSkills = () => {
 
   const resetForm = () => {
     setSkillData({
-      title: "",
+    id: "",
+    title: "",
       SkDescription: "",
       SkCategory: "",
       SkPercentage: "",
@@ -244,7 +246,7 @@ const CreateSkills = () => {
               className="w-full p-2 border border-gray-300 rounded"
             />
 
-            <Button type="submit" variant="primary" disabled={submitting}>
+            <Button type="submit" className="bg-primary" disabled={submitting}>
               {submitting ? "Submitting..." : "Submit"}
             </Button>
             <DialogClose asChild>
@@ -325,7 +327,7 @@ const CreateSkills = () => {
             </Button>
             <Button
               onClick={handleDelete}
-              variant="danger"
+              // variant="danger"
               className="bg-red-500 text-white hover:bg-red-700 border border-red-700 transition duration-300"
             >
               Confirm

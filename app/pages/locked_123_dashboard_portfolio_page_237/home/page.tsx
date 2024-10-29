@@ -22,6 +22,7 @@ import GetMyHome from "./GetMyHome";
 
 const MyHome = () => {
   const [profileData, setProfileData] = useState({
+    id: "",
     imageUrl: "",
     startName: "",
     endName: "",

@@ -29,13 +29,13 @@ interface Skill {
 
 const CreateCurrentSkills = () => {
   const [skillData, setSkillData] = useState<Skill>({
+    id: "", // Set a default value for id
     title: "",
     SkDescription: "",
     SkCategory: "",
     SkType: "",
     imageUrl: "",
   });
-
   const [Skills, setSkills] = useState<Skill[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -118,6 +118,7 @@ const CreateCurrentSkills = () => {
 
   const resetForm = () => {
     setSkillData({
+      id: "",
       title: "",
       SkDescription: "",
       SkCategory: "",
@@ -224,7 +225,7 @@ const CreateCurrentSkills = () => {
               className="w-full p-2 border border-gray-300 rounded"
             />
 
-            <Button type="submit" variant="primary" disabled={submitting}>
+            <Button type="submit" className="primary" disabled={submitting}>
               {submitting ? "Submitting..." : "Submit"}
             </Button>
             <DialogClose asChild>
@@ -298,7 +299,7 @@ const CreateCurrentSkills = () => {
             </Button>
             <Button
               onClick={handleDelete}
-              variant="danger"
+              // variant="danger"
               className="bg-red-500 text-white hover:bg-red-700 border border-red-700 transition duration-300"
             >
               Confirm

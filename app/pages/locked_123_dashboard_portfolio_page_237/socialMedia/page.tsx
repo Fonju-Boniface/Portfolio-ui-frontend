@@ -31,6 +31,7 @@ type Education = {
 
 const SocialMedia = () => {
   const [educationData, setEducationData] = useState<Omit<Education, 'id'>>({
+    // id: "",
     title: "",
     institution: "",
     imageUrl: "",
@@ -140,7 +141,8 @@ const SocialMedia = () => {
 
   const resetForm = () => {
     setEducationData({
-      title: "",
+    // id: "",
+    title: "",
       institution: "",
       imageUrl: "",
     });
