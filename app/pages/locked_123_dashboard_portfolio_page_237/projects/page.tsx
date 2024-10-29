@@ -339,7 +339,7 @@ const Projects = () => {
               </div>
             </div>
 
-            <Button type="submit" variant="primary" disabled={submitting}>
+            <Button type="submit"  disabled={submitting}>
               {submitting ? "Submitting..." : "Submit"}
             </Button>
             <DialogClose asChild>
@@ -477,7 +477,7 @@ const Projects = () => {
             <Button onClick={() => setIsDeleteDialogOpen(false)} variant="outline">
               Cancel
             </Button>
-            <Button onClick={handleDelete} variant="danger" className="bg-red-500 text-white hover:bg-red-700 border border-red-700 transition duration-300">
+            <Button onClick={handleDelete} className="bg-red-500 text-white hover:bg-red-700 border border-red-700 transition duration-300">
               Confirm
             </Button>
           </div>
