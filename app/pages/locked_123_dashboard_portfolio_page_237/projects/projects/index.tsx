@@ -20,6 +20,7 @@ interface Project {
   backendTools?: string[];
   researchTools?: string[];
   deploymentTools?: string[];
+  [key: string]: any; // Index signature
 }
 
 const GetProjects = () => {
