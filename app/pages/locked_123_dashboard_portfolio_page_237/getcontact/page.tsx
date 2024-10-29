@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { ref, onValue, remove, update } from "firebase/database";
 import { database } from "../../../firebase"; // Adjust the path as needed
@@ -22,11 +20,24 @@ import {
 } from "@/components/ui/dialog"; // Adjust the path based on your project structure
 import { Button } from "@/components/ui/button"; // Ensure you have a Button component for dialog actions
 
+// Define the structure of a contact
+interface Contact {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  country: string;
+  phone: string;
+  timestamp: number; // Assuming timestamp is a number
+  message: string;
+  seen?: boolean; // Optional field
+}
+
 const GetContact = () => {
-  const [contacts, setContacts] = useState([]);
+  const [contacts, setContacts] = useState<Contact[]>([]); // Specify the type as Contact[]
   const [loading, setLoading] = useState(true); // Loading state
   const [openDialog, setOpenDialog] = useState(false); // State for dialog
-  const [contactToDelete, setContactToDelete] = useState(null); // Contact to delete
+  const [contactToDelete, setContactToDelete] = useState<string | null>(null); // Contact to delete
 
   useEffect(() => {
     // Reference to the "contacts" node in the database
@@ -41,7 +52,7 @@ const GetContact = () => {
           const contactList = Object.keys(data).map((key) => ({
             id: key,
             ...data[key],
-          }));
+          })) as Contact[]; // Cast to Contact[]
           setContacts(contactList);
         } else {
           setContacts([]);
@@ -55,13 +66,13 @@ const GetContact = () => {
     );
   }, []);
 
-  const formatTimestamp = (timestamp) => {
+  const formatTimestamp = (timestamp: number) => {
     // Convert the timestamp to a readable format
     const date = new Date(timestamp);
     return date.toLocaleString(); // Adjust options if you need a specific format
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = (id: string) => {
     setContactToDelete(id);
     setOpenDialog(true); // Open the dialog for confirmation
   };
@@ -81,7 +92,7 @@ const GetContact = () => {
     }
   };
 
-  const handleCheckboxChange = (id, seen) => {
+  const handleCheckboxChange = (id: string, seen: boolean | undefined) => {
     const contactRef = ref(database, `contacts/${id}`);
     update(contactRef, { seen: !seen }) // Toggle the seen status
       .then(() => {
