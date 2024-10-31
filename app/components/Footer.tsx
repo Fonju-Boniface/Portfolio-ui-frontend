@@ -27,7 +27,7 @@ const Footer = () => {
             href="mailto:lockedcode237@gmail.com"
             className="text-gray-400 hover:text-white transition duration-300"
           >
-            Email: <b className="text-primary">lockedcode237@gmail.com</b>
+            Email: <b className="text-primary overflow-x-hidden">lockedcode237@gmail.com</b>
           </Link>
 
        
