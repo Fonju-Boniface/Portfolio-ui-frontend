@@ -4,7 +4,9 @@ import * as React from "react";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -45,7 +47,7 @@ export function ThemeColorToggle() {
 
   return (
     <Select
-      onValueChange={(value) => setThemeColor(value as ThemeColors)}
+      onValueChange={(value) => setThemeColor(value as ThemeColors)} // use of undeclared type: ThemeColors
       defaultValue={themeColor}
     >
       <SelectTrigger className="ring-offset-transparent focus:ring-transparent">

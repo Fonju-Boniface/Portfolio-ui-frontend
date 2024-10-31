@@ -17,6 +17,7 @@ import MyHome from "./home/page";
 import DVLottery from "./dv/DVLottery";
 import SocialMedia from "./socialMedia/page";
 import { ChevronRight } from "lucide-react";
+import GetRating from "./rating/GetRating";
 
 const tabContents = [
   { title: "Hobbies", content: <AboutHobbies /> },
@@ -32,6 +33,7 @@ const tabContents = [
   { title: "My Home", content: <MyHome /> },
   { title: "DV Lottery", content: <DVLottery /> },
   { title: "Social Media", content: <SocialMedia /> },
+  { title: "Get Rating", content: <GetRating /> },
 ];
 
 const Dashboard = () => {
@@ -81,7 +83,7 @@ const Dashboard = () => {
           />
         </Button>
         <div
-          className={`flex justify-start items-center flex-col h-full w-full overflow-y-auto pt-4
+          className={`flex justify-start items-center flex-col h-[calc(100vh-6rem)] w-full overflow-y-auto pt-4
           ${isVisible}`}
         >
           {tabContents.map((tab, index) => (

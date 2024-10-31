@@ -240,10 +240,10 @@ const ContactForm = () => {
               name="phone"
               value={formData.phone}
               onChange={handleInputChange}
-              className={`border rounded-md pl-16 border-gray-300 flex justify-center
-                bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl
-                dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static
-                lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30 ${formErrors.phone ? "border-red-500" : ""}`}
+              className={`border rounded-md pl-16 border-gray-300 flex justify-center pb-6 pt-8
+                bg-gradient-to-b from-zinc-200 backdrop-blur-2xl
+                dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:bg-gray-200 lg:dark:bg-zinc-800/30 
+                lg:w-auto lg:rounded-xl lg:border lg:p-4 ${formErrors.phone ? "border-red-500" : ""}`}
               placeholder="Enter your phone number"
               required
             />

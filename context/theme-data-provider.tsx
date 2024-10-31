@@ -52,12 +52,11 @@ export default function ThemeDataProvider({ children }: ThemeProviderProps) {
     if (theme) {
       localStorage.setItem("themeColor", themeColor);
       setGlobalColorTheme(theme as "light" | "dark", themeColor);
-
-      if (!isMounted) {
-        setIsMounted(true);
-      }
     }
-  }, [themeColor, theme]);
+
+    // Only set isMounted to true after the first render
+    setIsMounted(true);
+  }, [theme, themeColor]); // Include themeColor and theme as dependencies
 
   // If not mounted, prevent rendering
   if (!isMounted) {

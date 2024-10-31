@@ -25,6 +25,9 @@ type Project = {
   deploymentTools?: string[];
 };
 
+// Define a type for the valid keys of Project
+type ProjectKeys = keyof Omit<Project, 'id'>; // Exclude 'id' if you don't need it
+
 const ProjectDetails = () => {
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
@@ -88,13 +91,9 @@ const ProjectDetails = () => {
 
       {/* Tags */}
       <div className="mt-4 grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {[
-          "generalTools",
-          "frontendTools",
-          "backendTools",
-          "researchTools",
-          "deploymentTools",
-        ].map((group) => (
+        {(
+          ["generalTools", "frontendTools", "backendTools", "researchTools", "deploymentTools"] as ProjectKeys[]
+        ).map((group) => (
           <div
             key={group}
             className="flex flex-col items-start p-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 text-center justify-between border-b border-gray-300 bg-gradient-to-b from-zinc-200 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:dark:bg-zinc-800/30"

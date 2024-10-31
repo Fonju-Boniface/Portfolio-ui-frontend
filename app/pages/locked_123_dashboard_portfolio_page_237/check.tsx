@@ -19,6 +19,7 @@ const data = [
   {
     goal: 400,
   },
+  
   {
     goal: 300,
   },

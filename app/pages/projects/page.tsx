@@ -61,7 +61,7 @@ const Projects = () => {
         My Projects
       </h1>
       <p className="text-sm sm:text-base md:text-lg lg:text-xl text-center mt-4">
-        Explore some of the innovative and creative projects I've worked on.
+        Explore some of the innovative and creative projects {"I've"} worked on.
       </p>
 
       <div className="mt-8 grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

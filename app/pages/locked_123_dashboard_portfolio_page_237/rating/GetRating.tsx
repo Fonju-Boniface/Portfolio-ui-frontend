@@ -1,444 +1,188 @@
-"use client"
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import Select from "react-select";
-import PhoneInput from "react-phone-number-input";
-import "react-phone-number-input/style.css";
+"use client";
+import React, { useEffect, useState } from "react";
+import { ref, onValue, update, remove } from "firebase/database";
+import { database } from "../../../firebase"; // Adjust this import path as necessary
+import Rating from "react-rating"; // Ensure correct import
+
+import Autoplay from "embla-carousel-autoplay";
+
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-  DialogContent,
-} from "@/components/ui/dialog";
-import ReactStars from "react-rating-stars-component";
-import { ref, push, update, remove, onValue } from "firebase/database";
-import {
-  getStorage,
-  ref as storageRef,
-  uploadBytes,
-  getDownloadURL,
-} from "firebase/storage";
-import { database } from "../../../firebase";
-import toast from "react-hot-toast";
-import GetRatingMain from "./GetRatingMain";
+import Image from "next/image";
 
-type CountryOption = {
-  label: string;
-  value: string;
-  flag: string;
-  code: string; // Telephone code
-};
-
-interface CountryData {
-  name: {
-    common: string;
-  };
-  flag: string;
-  cca2: string;
-  idd: {
-    root: string;
-    suffixes?: string[];
-  };
-}
-
-interface Rating {
-  id?: string;
+// RatingData interface definition
+interface RatingData {
+  id: string;
   name: string;
-  email: string;
-  phone: {
-    countryCode: string;
-    phoneNumber: string | undefined;
-    countryFlag: string;
-  };
   profession: string;
-  website?: string;
-  description?: string;
-  myContribution?: string;
+  description: string;
   rating: number;
-  review: string;
-  imageUrl?: string;
+  imageUrl: string; // Add other properties as needed
 }
 
-const GetRating = () => {
-  const [countries, setCountries] = useState<CountryOption[]>([]);
-  const [selectedCountry, setSelectedCountry] = useState<CountryOption | null>(null);
-  const [phoneNumber, setPhoneNumber] = useState<string | undefined>();
-  const [rating, setRating] = useState<number>(0);
-  const [review, setReview] = useState<string>("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imageUrl, setImageUrl] = useState<string>("");
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [name, setName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [profession, setProfession] = useState<string>("");
-  const [website, setWebsite] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [myContribution, setMyContribution] = useState<string>("");
-  const [loading, setLoading] = useState(false);
-  const [ratings, setRatings] = useState<Rating[]>([]);
-  const [ratingToDelete, setRatingToDelete] = useState<string | null>(null);
-  const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
-  const [ratingToUpdate, setRatingToUpdate] = useState<Rating | null>(null);
-
-  useEffect(() => {
-    axios
-      .get<CountryData[]>("https://restcountries.com/v3.1/all")
-      .then((response) => {
-        const countryData = response.data.map((country) => ({
-          label: `${country.flag} ${country.name.common}`,
-          value: country.cca2,
-          flag: country.flag,
-          code:
-            country.idd.root +
-            (country.idd.suffixes ? country.idd.suffixes[0] : ""),
-        }));
-        setCountries(countryData);
-      })
-      .catch((error) => {
-        console.error("Error fetching countries:", error);
-      });
-  }, []);
+const GetRating: React.FC = () => {
+  const [ratings, setRatings] = useState<RatingData[]>([]);
+  const [editingRating, setEditingRating] = useState<RatingData | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
     const ratingsRef = ref(database, "ratings");
-    onValue(ratingsRef, (snapshot) => {
+
+    const unsubscribe = onValue(ratingsRef, (snapshot) => {
       const data = snapshot.val();
-      const loadedRatings = data
-  ? Object.entries(data).map(([id, rating]) => 
-      typeof rating === 'object' && rating !== null 
-        ? { id, ...rating } 
-        : { id } // or handle the case where rating is not valid
-    ) as Rating[]
-  : [];
-      setRatings(loadedRatings);
+      const ratingsArray: RatingData[] = []; // Specify the type for the array
+      for (const id in data) {
+        ratingsArray.push({ id, ...data[id] });
+      }
+      setRatings(ratingsArray); // Update the state with fetched ratings
     });
+
+    return () => unsubscribe();
   }, []);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImageFile(file);
-    }
+  const plugin = React.useRef(Autoplay({ delay: 2000, stopOnInteraction: true }));
+
+  const handleEdit = (rating: RatingData) => { // Specify the type for rating
+    setEditingRating(rating);
+    setIsDialogOpen(true);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
+  const handleDelete = async (ratingId: string) => { // Specify the type for ratingId
     try {
-      let url = "";
-      if (imageFile) {
-        const storage = getStorage();
-        const storageReference = storageRef(storage, `ratings/${imageFile.name}`);
-        await uploadBytes(storageReference, imageFile);
-        url = await getDownloadURL(storageReference);
-      }
-
-      const formData: Rating = {
-        name,
-        email,
-        phone: {
-          countryCode: selectedCountry?.code || "",
-          phoneNumber,
-          countryFlag: selectedCountry?.flag || "",
-        },
-        profession,
-        website,
-        description,
-        myContribution,
-        rating,
-        review,
-        imageUrl: url,
-      };
-
-      const ratingsRef = ref(database, "ratings");
-      await push(ratingsRef, formData);
-      toast.success("Rating submitted successfully!");
-      setIsUpdateDialogOpen(false);
-      resetForm();
+      await remove(ref(database, `ratings/${ratingId}`));
+      alert("Rating deleted successfully");
     } catch (error) {
-      console.error("Error submitting rating:", error);
-      toast.error("Failed to submit rating!");
-    } finally {
-      setLoading(false);
+      console.error("Error deleting rating:", error);
     }
   };
 
-  const resetForm = () => {
-    setName("");
-    setEmail("");
-    setPhoneNumber("");
-    setProfession("");
-    setWebsite("");
-    setDescription("");
-    setMyContribution("");
-    setRating(0);
-    setReview("");
-    setImageFile(null);
-    setImageUrl("");
-    setSelectedCountry(null);
-  };
-
-  const handleDeleteRating = async () => {
-    if (ratingToDelete) {
+  const handleSave = async () => {
+    if (editingRating) {
       try {
-        const ratingRef = ref(database, `ratings/${ratingToDelete}`);
-        await remove(ratingRef);
-        toast.success("Rating deleted successfully!");
-      } catch (error) {
-        console.error("Error deleting rating:", error);
-        toast.error("Failed to delete rating!");
-      } finally {
-        setIsDeleteDialogOpen(false);
-        setRatingToDelete(null);
-      }
-    }
-  };
-
-  const handleUpdateRating = async () => {
-    if (ratingToUpdate) {
-      try {
-        const ratingRef = ref(database, `ratings/${ratingToUpdate.id}`);
-        const updatedData = {
-          name,
-          email,
-          phone: {
-            countryCode: selectedCountry?.code || "",
-            phoneNumber,
-            countryFlag: selectedCountry?.flag || "",
-          },
-          profession,
-          website,
-          description,
-          myContribution,
-          rating,
-          review,
-          imageUrl: imageUrl || ratingToUpdate.imageUrl,
-        };
-
-        await update(ratingRef, updatedData);
-        toast.success("Rating updated successfully!");
-        resetForm();
+        await update(ref(database, `ratings/${editingRating.id}`), {
+          name: editingRating.name,
+          profession: editingRating.profession,
+          description: editingRating.description,
+          rating: editingRating.rating,
+        });
+        alert("Rating updated successfully");
+        setIsDialogOpen(false);
+        setEditingRating(null);
       } catch (error) {
         console.error("Error updating rating:", error);
-        toast.error("Failed to update rating!");
-      } finally {
-        setIsUpdateDialogOpen(false);
-        setRatingToUpdate(null);
       }
     }
   };
 
   return (
-    <div className="p-6 flex flex-col justify-center items-center w-full">
-      <Button onClick={() => setIsUpdateDialogOpen(true)} className="mb-4 ">
-        Add Rating
-      </Button>
-      <Dialog open={isUpdateDialogOpen} onOpenChange={setIsUpdateDialogOpen}>
-        <DialogContent className="h-[80vh]">
-          <DialogTitle>
-            {ratingToUpdate ? "Update Rating" : "Rating Submission"}
-          </DialogTitle>
-          <DialogDescription>
-            Submit your rating and review below:
-          </DialogDescription>
-          <form
-            onSubmit={ratingToUpdate ? handleUpdateRating : handleSubmit}
-            className="space-y-4 overflow-auto"
-          >
-            <div className="space-y-2">
-              <label htmlFor="name" className="block font-medium">
-                Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="border p-2 w-full"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="email" className="block font-medium">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="border p-2 w-full"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="phone" className="block font-medium">
-                Phone Number
-              </label>
-              <Select
-                options={countries}
-                onChange={(value) => setSelectedCountry(value as CountryOption)}
-                className="mb-4"
-                placeholder="Select country"
-              />
-              {selectedCountry && (
-                <PhoneInput
-                  international
-                  country={selectedCountry.value}
-                  value={phoneNumber}
-                  onChange={setPhoneNumber}
-                  defaultCountry={selectedCountry.value}
-                  className="border p-2 w-full"
-                />
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="profession" className="block font-medium">
-                Profession
-              </label>
-              <input
-                type="text"
-                id="profession"
-                value={profession}
-                onChange={(e) => setProfession(e.target.value)}
-                className="border p-2 w-full"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="website" className="block font-medium">
-                Website
-              </label>
-              <input
-                type="url"
-                id="website"
-                value={website}
-                onChange={(e) => setWebsite(e.target.value)}
-                className="border p-2 w-full"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="description" className="block font-medium">
-                Description
-              </label>
-              <textarea
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="border p-2 w-full"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="myContribution" className="block font-medium">
-                My Contribution
-              </label>
-              <textarea
-                id="myContribution"
-                value={myContribution}
-                onChange={(e) => setMyContribution(e.target.value)}
-                className="border p-2 w-full"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="rating" className="block font-medium">
-                Rating
-              </label>
-              <ReactStars
-                count={5}
-                onChange={(newRating) => setRating(newRating)}
-                size={24}
-                activeColor="#ffd700"
-                value={rating}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="review" className="block font-medium">
-                Review
-              </label>
-              <select
-                id="review"
-                value={review}
-                onChange={(e) => setReview(e.target.value)}
-                className="border p-2 w-full"
-              >
-                <option value="Good Portfolio">Good Portfolio</option>
-                <option value="Nice">Nice</option>
-                <option value="Great Job">Great Job</option>
-                <option value="Worst Stuff">Worst Stuff</option>
-                <option value="I Love It">I Love It</option>
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="image" className="block font-medium">
-                Upload Image
-              </label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="border p-2 w-full"
-              />
-            </div>
-
-            <DialogFooter>
-              <Button
-                type="button"
-                onClick={() => setIsUpdateDialogOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" disabled={loading}>
-                {loading ? "Submitting..." : "Submit"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent>
-          <DialogTitle>Confirm Deletion</DialogTitle>
-          <DialogDescription>
-            Are you sure you want to delete this rating?
-          </DialogDescription>
-          <DialogFooter>
-            <Button type="button" onClick={() => setIsDeleteDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button type="button" onClick={handleDeleteRating}>
-              Delete
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Display Ratings */}
-      {ratings.length > 0 && (
-        <div>
-          <h2>Ratings List</h2>
-          <ul>
+    <div className="flex justify-center items-center flex-col">
+      <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary my-5">Ratings</h2>
+      <p className="my-5">
+        See what <b className="text-primary">{ratings.length}</b> persons have written about my work
+      </p>
+      {ratings.length > 0 ? (
+        <Carousel
+          plugins={[plugin.current]}
+          className="w-full max-w-md"
+          onMouseEnter={plugin.current.stop}
+          onMouseLeave={plugin.current.reset}
+        >
+          <CarouselContent className="w-full">
             {ratings.map((rating) => (
-              <li key={rating.id}>
-                {rating.name} - {rating.rating} stars
-              </li>
+              <CarouselItem key={rating.id}>
+                <Card className="w-full">
+                  <CardContent className="flex aspect-square items-center flex-col justify-center p-1 px-2 gap-1 text-center">
+                    <Image
+                      src={rating.imageUrl}
+                      alt={rating.name}
+                      width={150}
+                      height={150}
+                      className="h-20 w-20 rounded-full outline-dashed outline-2 outline-primary p-1"
+                    />
+                    <h3 className="uppercase mt-3">{rating.name}</h3>
+                    <p className="text-primary font-bold">I&apos;m a {rating.profession}</p>
+                    <p className="text-center">{rating.description}</p>
+                    <Rating
+                      initialRating={rating.rating}
+                      readonly
+                      emptySymbol="⭐"
+                      fullSymbol="⭐"
+                      className="text-yellow-500"
+                    />
+                    <div className="flex space-x-2 mt-3">
+                      <Button className="bg-primary" onClick={() => handleEdit(rating)}>
+                        Edit
+                      </Button>
+                      <Button variant="destructive" onClick={() => handleDelete(rating.id)}>
+                        Delete
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </CarouselItem>
             ))}
-          </ul>
-        </div>
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
+      ) : (
+        <p>No ratings available.</p>
       )}
 
-      <GetRatingMain />
+      {isDialogOpen && editingRating && (
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent>
+            <DialogTitle>Edit Rating</DialogTitle>
+            <div>
+              <label>Name:</label>
+              <input
+                type="text"
+                value={editingRating.name}
+                onChange={(e) => setEditingRating({ ...editingRating, name: e.target.value })}
+                className="block border rounded p-2 w-full"
+              />
+            </div>
+            <div>
+              <label>Profession:</label>
+              <input
+                type="text"
+                value={editingRating.profession}
+                onChange={(e) => setEditingRating({ ...editingRating, profession: e.target.value })}
+                className="block border rounded p-2 w-full"
+              />
+            </div>
+            <div>
+              <label>Description:</label>
+              <textarea
+                value={editingRating.description}
+                onChange={(e) => setEditingRating({ ...editingRating, description: e.target.value })}
+                className="block border rounded p-2 w-full"
+              />
+            </div>
+            <div>
+              <label>Rating:</label>
+              <Rating 
+                initialRating={editingRating.rating}
+                onChange={(newRating: number) => setEditingRating({ ...editingRating, rating: newRating })} // Explicitly declare newRating type
+                emptySymbol="⭐"
+                fullSymbol="⭐"
+                className="text-yellow-500"
+              />
+            </div>
+            <Button onClick={handleSave} className="mt-4">
+              Save Changes
+            </Button>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 };

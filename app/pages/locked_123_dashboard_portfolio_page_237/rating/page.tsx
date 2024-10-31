@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Select from "react-select";
@@ -13,8 +12,8 @@ import {
   DialogFooter,
   DialogContent,
 } from "@/components/ui/dialog";
-import ReactStars from "react-rating-stars-component";
-import { ref, push, update, remove, onValue } from "firebase/database";
+import Rating from "react-rating";
+import { ref, push, update, remove, onValue, set } from "firebase/database"; // Import set
 import {
   getStorage,
   ref as storageRef,
@@ -30,7 +29,7 @@ type CountryOption = {
   label: string;
   value: string;
   flag: string;
-  code: string; // Telephone code
+  code: string;
 };
 
 type Country = {
@@ -38,9 +37,9 @@ type Country = {
     common: string;
     official: string;
   };
-  cca2: string; // 2-letter country code
-  ccn3: string; // 3-digit country code
-  cca3: string; // 3-letter country code
+  cca2: string;
+  ccn3: string;
+  cca3: string;
   idd: {
     root: string;
     suffixes: string[];
@@ -48,7 +47,7 @@ type Country = {
   flag: string;
 };
 
-type Rating = {
+type RatingData = {
   id: string;
   name: string;
   email: string;
@@ -68,15 +67,16 @@ type Rating = {
 
 const RatingForm = () => {
   const [countries, setCountries] = useState<CountryOption[]>([]);
-  const [selectedCountry, setSelectedCountry] = useState<CountryOption | null>(null);
-  const [phoneNumber, setPhoneNumber] = useState<string | undefined>();
+  const [selectedCountry, setSelectedCountry] = useState<CountryOption | null>(
+    null,
+  );
+  const [phoneNumber, setPhoneNumber] = useState<string>(""); // Change here
   const [rating, setRating] = useState<number>(0);
   const [review, setReview] = useState<string>("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string>("");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  // Form Fields
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [profession, setProfession] = useState<string>("");
@@ -85,12 +85,11 @@ const RatingForm = () => {
   const [myContribution, setMyContribution] = useState<string>("");
 
   const [loading, setLoading] = useState(false);
-  const [ratings, setRatings] = useState<Rating[]>([]);
+  const [ratings, setRatings] = useState<RatingData[]>([]);
   const [ratingToDelete, setRatingToDelete] = useState<string | null>(null);
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
-  const [ratingToUpdate, setRatingToUpdate] = useState<Rating | null>(null);
+  const [ratingToUpdate, setRatingToUpdate] = useState<RatingData | null>(null);
 
-  // Fetch country data
   useEffect(() => {
     axios
       .get("https://restcountries.com/v3.1/all")
@@ -110,14 +109,22 @@ const RatingForm = () => {
       });
   }, []);
 
-  // Fetch ratings from Firebase
   useEffect(() => {
     const ratingsRef = ref(database, "ratings");
     onValue(ratingsRef, (snapshot) => {
       const data = snapshot.val();
-      const loadedRatings = data
-        ? Object.entries(data).map(([id, rating]) => ({ id, ...rating } as Rating))
+      const loadedRatings: RatingData[] = data
+        ? Object.entries(data)
+            .map(([id, rating]) => {
+              // Type guard to ensure rating is an object
+              if (typeof rating === "object" && rating !== null) {
+                return { id, ...rating } as RatingData;
+              }
+              return null; // Return null for non-object values
+            })
+            .filter((rating): rating is RatingData => rating !== null) // Filter out nulls
         : [];
+
       setRatings(loadedRatings);
     });
   }, []);
@@ -139,10 +146,10 @@ const RatingForm = () => {
     }
 
     setLoading(true);
-    
+
     try {
-      const ratingData: Rating = {
-        id: "", // Will be generated on submission
+      const ratingData: RatingData = {
+        id: "",
         name,
         email,
         phone: {
@@ -160,19 +167,15 @@ const RatingForm = () => {
       };
 
       if (ratingToUpdate) {
-        // Update existing rating
         await update(ref(database, `ratings/${ratingToUpdate.id}`), ratingData);
         alert("Rating updated successfully!");
       } else {
-        // Submit new rating
         const newRatingRef = push(ref(database, "ratings"));
         await set(newRatingRef, ratingData);
         alert("Rating submitted successfully!");
       }
 
-      // Reset form fields after submission
       resetForm();
-
     } catch (error) {
       console.error("Error submitting rating:", error);
       alert("There was an issue submitting your rating. Please try again.");
@@ -185,7 +188,7 @@ const RatingForm = () => {
   const resetForm = () => {
     setName("");
     setEmail("");
-    setPhoneNumber("");
+    setPhoneNumber(""); // Ensure it resets to a string
     setSelectedCountry(null);
     setProfession("");
     setWebsite("");
@@ -225,18 +228,20 @@ const RatingForm = () => {
           const storage = getStorage();
           const storageReference = storageRef(
             storage,
-            `ratings/${imageFile.name}`
+            `ratings/${imageFile.name}`,
           );
           await uploadBytes(storageReference, imageFile);
           url = await getDownloadURL(storageReference);
         }
 
-        const updatedData: Rating = {
-          ...ratingToUpdate, // Spread existing data
+        const updatedData: RatingData = {
+          ...ratingToUpdate,
           phone: {
-            countryCode: selectedCountry?.code || ratingToUpdate.phone.countryCode,
-            phoneNumber,
-            countryFlag: selectedCountry?.flag || ratingToUpdate.phone.countryFlag,
+            countryCode:
+              selectedCountry?.code || ratingToUpdate.phone.countryCode,
+            phoneNumber: phoneNumber || "", // Default value
+            countryFlag:
+              selectedCountry?.flag || ratingToUpdate.phone.countryFlag,
           },
           imageUrl: url,
         };
@@ -250,13 +255,12 @@ const RatingForm = () => {
         toast.error("Failed to update rating!");
       } finally {
         setIsUpdateDialogOpen(false);
-        setRatingToUpdate(null);
       }
     }
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 flex flex-col gap-4 justify-center items-center">
       <Button onClick={() => setIsUpdateDialogOpen(true)} className="mb-4">
         Add Rating
       </Button>
@@ -301,25 +305,48 @@ const RatingForm = () => {
             </div>
 
             <div className="space-y-2">
+              <label htmlFor="country" className="block font-medium">
+                Country
+              </label>
+              <Select
+  value={selectedCountry}
+  onChange={setSelectedCountry}
+  options={countries}
+  placeholder="Select a country"
+
+  styles={{
+    control: (provided) => ({
+      ...provided,
+      backgroundColor: '#321832', // Set background color of the control
+      borderColor: 'darkred', // Optional: Change border color
+      color: 'white', // Change text color
+    }),
+    option: (provided, { isFocused, isSelected }) => ({
+      ...provided,
+      backgroundColor: isSelected ? 'darkred' : isFocused ? 'lightcoral' : '#321832', // Background for options
+      color: 'white', // Change option text color
+    }),
+    menu: (provided) => ({
+      ...provided,
+      backgroundColor: '#321832', // Background for the dropdown menu
+    }),
+  }}
+/>
+
+            </div>
+
+            <div className="space-y-2">
               <label htmlFor="phone" className="block font-medium">
                 Phone Number
               </label>
-              <Select
-                options={countries}
-                onChange={(value) => setSelectedCountry(value as CountryOption)}
-                className="mb-4"
-                placeholder="Select country"
+              <PhoneInput
+                international
+                defaultCountry="US"
+                value={phoneNumber}
+                onChange={(value) => setPhoneNumber(value || "")} // Handle undefined or null
+                className="border p-2 w-full  "
+                required
               />
-              {selectedCountry && (
-                <PhoneInput
-                  international
-                  country={selectedCountry.value}
-                  value={phoneNumber}
-                  onChange={setPhoneNumber}
-                  defaultCountry={selectedCountry.value}
-                  className="border p-2 w-full"
-                />
-              )}
             </div>
 
             <div className="space-y-2">
@@ -346,7 +373,6 @@ const RatingForm = () => {
                 value={website}
                 onChange={(e) => setWebsite(e.target.value)}
                 className="border p-2 w-full"
-                required
               />
             </div>
 
@@ -377,28 +403,14 @@ const RatingForm = () => {
             </div>
 
             <div className="space-y-2">
-              <label className="block font-medium">Upload Image</label>
-              <input type="file" onChange={handleImageChange} />
-              {imageUrl && (
-                <div className="relative h-40 w-40">
-                  <Image
-                    src={imageUrl}
-                    alt="Uploaded Image"
-                    layout="fill"
-                    objectFit="cover"
-                  />
-                </div>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <label className="block font-medium">Rating</label>
-              <ReactStars
-                count={5}
-                onChange={setRating}
-                size={24}
-                activeColor="#ffd700"
-                value={rating}
+              <label htmlFor="rating" className="block font-medium">
+                Rating
+              </label>
+              <Rating
+                initialRating={rating}
+                onChange={(rate) => setRating(rate)}
+                emptySymbol="far fa-star text-gray-400"
+                fullSymbol="fas fa-star text-yellow-400"
               />
             </div>
 
@@ -415,65 +427,37 @@ const RatingForm = () => {
               />
             </div>
 
+            <div className="space-y-2">
+              <label htmlFor="image" className="block font-medium">
+                Upload Image
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="border p-2 w-full"
+              />
+              {imageUrl && (
+                <Image src={imageUrl} alt="Preview" width={100} height={100} />
+              )}
+            </div>
+
             <DialogFooter>
               <Button type="submit" disabled={loading}>
-                {ratingToUpdate ? "Update Rating" : "Submit Rating"}
+                {loading ? "Submitting..." : "Submit"}
+              </Button>
+              <Button
+                type="button"
+                onClick={() => setIsUpdateDialogOpen(false)}
+              >
+                Cancel
               </Button>
             </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
 
-      {/* Ratings List */}
-      <GetRatingMain
-        ratings={ratings}
-        onDelete={(id: string) => {
-          setRatingToDelete(id);
-          setIsDeleteDialogOpen(true);
-        }}
-        onEdit={(rating: Rating) => {
-          setRatingToUpdate(rating);
-          setName(rating.name);
-          setEmail(rating.email);
-          setPhoneNumber(rating.phone.phoneNumber);
-          setSelectedCountry({
-            value: rating.phone.countryCode,
-            label: "",
-            flag: rating.phone.countryFlag,
-            code: rating.phone.countryCode,
-          });
-          setProfession(rating.profession);
-          setWebsite(rating.website);
-          setDescription(rating.description);
-          setMyContribution(rating.myContribution);
-          setRating(rating.rating);
-          setReview(rating.review);
-          setImageUrl(rating.imageUrl);
-          setIsUpdateDialogOpen(true);
-        }}
-      />
-
-      {/* Delete Dialog */}
-      <Dialog
-        open={isDeleteDialogOpen}
-        onOpenChange={setIsDeleteDialogOpen}
-      >
-        <DialogContent>
-          <DialogTitle>Delete Rating</DialogTitle>
-          <DialogDescription>
-            Are you sure you want to delete this rating?
-          </DialogDescription>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsDeleteDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button onClick={handleDeleteRating}>Delete</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <GetRatingMain />
     </div>
   );
 };
