@@ -56,7 +56,7 @@ const Projects = () => {
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container  py-8">
       <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center text-primary">
         My Projects
       </h1>

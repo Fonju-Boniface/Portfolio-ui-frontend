@@ -113,7 +113,7 @@ const GetSkills = () => {
                     {/* Dialog Content */}
                     {selectedSkill && (
                       <DialogContent
-                        className="h-[90vh] w-full sm:w-[400px] bg-gradient-to-b dark:bg-zinc-800/30
+                        className="h-[75vh] w-full sm:w-[400px] bg-gradient-to-b dark:bg-zinc-800/30
                           dark:from-inherit rounded-xl lg:border lg:dark:bg-zinc-800/30 overflow-auto"
                       >
                         <DialogHeader>

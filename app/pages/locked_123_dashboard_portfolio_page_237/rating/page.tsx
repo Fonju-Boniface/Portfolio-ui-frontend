@@ -442,7 +442,7 @@ const RatingForm = () => {
               )}
             </div>
 
-            <DialogFooter>
+            <DialogFooter className="flex  gap-3">
               <Button type="submit" disabled={loading}>
                 {loading ? "Submitting..." : "Submit"}
               </Button>
