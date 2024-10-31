@@ -46,7 +46,7 @@ export default function Home() {
         )}
 
         <small className="mt-8 font-bold text-sm sm:text-base md:text-lg">
-          Welc<b className="text-primary">ome </b>
+          Welc<b className="text-primary">ome </b> speed
         </small>
         <div className="flex justify-center items-center gap-2 flex-wrap mt-4 text-center">
           <h3
