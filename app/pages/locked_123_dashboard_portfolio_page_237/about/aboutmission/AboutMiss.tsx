@@ -43,7 +43,7 @@ const AboutMiss = () => {
               <i className={`${item.iconName} text-primary text-4xl mb-4`}></i>
 
               <h2 className="text-xl font-bold">{item.name}</h2>
-              <p className="mt-2 text-sm sm:text-base">{item.text}</p>
+              <p className="mt-2 sm:text-base text-2xl font-bold">{item.text}</p>
             </div>
           ))}
         </section>

@@ -68,7 +68,7 @@ export default function Home() {
               profileData.tags.map((tag, index) => (
                 <li
                   key={index}
-                  className="text-sm text-center w-full sm:text-sm md:text-base"
+                  className="text-2xl font-bold text-center w-full sm:text-sm md:text-base"
                 >
                   {tag}
                 </li>

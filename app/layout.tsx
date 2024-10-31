@@ -148,7 +148,7 @@ export default function RootLayout({
                 </main>
                 <div
                   className="w-[100%] flex justify-center items-center sm:mb-[.3rem]
-                    mb-[4rem]"
+                    mb-[4rem] mt-7"
                 >
                   <Footer />
                 </div>

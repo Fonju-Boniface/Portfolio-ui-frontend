@@ -110,7 +110,7 @@ const DownloadResume = () => {
       {/* Display the uploaded resume with download and view options */}
       {resumeUrl && (
         <div className="mt-6">
-          <h2 className="text-lg font-semibold">Resume File:</h2>
+          <h2 className="font-semibold text-2xl ">Resume File:</h2>
           <a
             href={resumeUrl}
             target="_blank"
@@ -123,7 +123,7 @@ const DownloadResume = () => {
           <a
             href={resumeUrl}
             download
-            className="text-blue-500 underline mt-2 block"
+            className="text-blue-500 underline mt-2 block text-2xl font-bold"
           >
             Download Resume
           </a>

@@ -18,12 +18,8 @@ const AboutTextField = () => {
 
     return (
         <>
-            {/* {text ? (
-                <p className='text-center'>Loading...</p>
-            ) : (
-
-            )} */}
-            <div className="mt-4 text-sm sm:text-base md:text-lg lg:text-xl max-w-4xl mx-auto text-justify">{text ? text : <p className='text-center'>Loading...</p> }</div>
+       
+            <div className="mt-4 text-2xl font-bold sm:text-base md:text-lg lg:text-xl max-w-4xl mx-auto text-justify">{text ? text : <p className='text-center'>Loading...</p> }</div>
         </>
     );
 };

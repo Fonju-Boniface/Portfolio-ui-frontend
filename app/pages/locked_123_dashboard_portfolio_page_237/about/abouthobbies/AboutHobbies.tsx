@@ -35,7 +35,7 @@ const AboutHobbies = () => {
                             <h3 className="text-xl font-bold">{hobby.name}</h3>
                             
                             
-                            <p className="mt-2 text-sm sm:text-base">{hobby.text}</p>
+                            <p className="mt-2 text-2xl font-bold sm:text-base">{hobby.text}</p>
                         </div>
                     ))}
                 </section>

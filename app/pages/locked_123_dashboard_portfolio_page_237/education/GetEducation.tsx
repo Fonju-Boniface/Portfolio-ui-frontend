@@ -77,16 +77,16 @@ const GetEducation = () => {
                   <h3 className="text-2xl font-semibold mb-2">
                     {education.educationName}
                   </h3>
-                  <p className="text-sm">
+                  <p className="text-sm font-bold">
                     <strong className='text-primary'>Institution:</strong> {education.institution}
                   </p>
-                  <p className="text-sm">
+                  <p className="text-sm font-bold">
                     <strong className='text-primary'>Type:</strong> {education.SkType}
                   </p>
-                  <p className="text-sm">
+                  <p className="text-sm font-bold">
                     <strong className='text-primary'>Status:</strong> {education.status}
                   </p>
-                  <p className="text-sm text-gray-500 mb-2">
+                  <p className="text-xl font-bold text-gray-500 mb-2">
                     <strong className='text-primary'>Description:</strong> {education.SkDescription}
                   </p>
                 </div>
