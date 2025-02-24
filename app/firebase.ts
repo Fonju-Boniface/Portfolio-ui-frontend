@@ -2,17 +2,18 @@
 import { initializeApp, FirebaseApp } from "firebase/app";
 import { getAnalytics, Analytics } from "firebase/analytics";
 import { getDatabase, Database } from "firebase/database";
+import "firebase/auth"
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyB1tDESeNbmynIOO4hxBQ1huAR_Hfl8qnk",
-  authDomain: "full-portfolio-131da.firebaseapp.com",
-  projectId: "full-portfolio-131da",
-  storageBucket: "full-portfolio-131da.appspot.com",
-  messagingSenderId: "872997496049",
-  appId: "1:872997496049:web:271d0868b96f9a6065f550",
-  measurementId: "G-BXHW2B382Y",
-  databaseURL: "https://full-portfolio-131da-default-rtdb.firebaseio.com", // Add this for Realtime Database
+  apiKey: "AIzaSyADdNv3Qn-6OOWvKnLIAhgvxg4XnlvBg2U",
+  authDomain: "locked-portfolio-ui.firebaseapp.com",
+  projectId: "locked-portfolio-ui",
+  storageBucket: "locked-portfolio-ui.firebasestorage.app",
+  messagingSenderId: "52649041761",
+  appId: "1:52649041761:web:1e65cd68e1ee9414e86f20",
+  measurementId: "G-2GSYFC69MK"
+
 };
 
 // Initialize Firebase

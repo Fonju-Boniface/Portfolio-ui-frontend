@@ -6,8 +6,8 @@ import DownResume from "./navbars/profile/DownResume";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-gray-300 py-12 px-6">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+    <footer className="bg-gray-900 text-gray-300 py-12 px-1 sm:px-6">
+      <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Company Info Section */}
         <div>
           <h2 className="text-2xl font-bold text-white mb-4">Company</h2>

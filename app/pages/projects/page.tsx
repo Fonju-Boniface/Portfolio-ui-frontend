@@ -24,8 +24,7 @@ const Projects = () => {
 
   useEffect(() => {
     const projectsRef = ref(database, "MyProjects");
-
-    // Fetch existing projects from Firebase
+  
     const unsubscribe = onValue(
       projectsRef,
       (snapshot) => {
@@ -35,6 +34,7 @@ const Projects = () => {
             id: key,
             ...data[key],
           }));
+          console.log("Loaded Projects:", loadedProjects); // Debugging line
           setProjects(loadedProjects);
         } else {
           setProjects([]);
@@ -45,12 +45,12 @@ const Projects = () => {
         console.error("Error fetching projects:", error);
         setError("Failed to load projects.");
         setLoading(false);
-      },
+      }
     );
-
-    // Cleanup subscription on unmount
+  
     return () => unsubscribe();
   }, []);
+  
 
   if (loading) return <p>Loading projects...</p>;
   if (error) return <p className="text-red-500">{error}</p>;
@@ -99,7 +99,7 @@ const Projects = () => {
                     variant="outline"
                     className="bg-primary w-full text-secondary flex items-center space-x-2"
                   >
-                    Project Details
+                   {project.id}
                   </Button>
                 </Link>
 

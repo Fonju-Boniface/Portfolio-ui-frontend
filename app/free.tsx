@@ -53,3 +53,9 @@ export default function Home() {
     </main>
   );
 }
+
+
+
+//  {/* User Display Name and Email */}
+//             {/* <p className="font-bold">{user.displayName ?? "User"}</p> */}
+//             {/* <p className="text-sm text-gray-600">{user.email}</p> */}

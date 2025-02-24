@@ -29,13 +29,13 @@ const GetMyHome = () => {
   }
 
   return (
-    <div>
+    <div className="w-ful">
       <h1 className="text-2xl font-bold mb-4">Home Information</h1>
       <div
         className="flex flex-col justify-center items-start border-b border-gray-300
           bg-gradient-to-b from-zinc-200 backdrop-blur-2xl dark:border-neutral-800
           dark:bg-zinc-800/30 dark:from-inherit lg:static rounded-xl lg:border
-          lg:bg-gray-200 lg:dark:bg-zinc-800/30 p-1 w-full sm:w-[300px]"
+          lg:bg-gray-200 lg:dark:bg-zinc-800/30 p-1 sm:w-full"
       >
         {/* Image */}
         {profileData.imageUrl && (
@@ -61,9 +61,9 @@ const GetMyHome = () => {
         </div>
 
         {/* Display Tags */}
-        <div className="mt-4">
+        <div className="mt-4 w-full">
           <h3 className="text-lg font-medium">Tags:</h3>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-col gap-2">
             {profileData.tags && profileData.tags.length > 0 ? (
               profileData.tags.map((tag, index) => (
                 <span

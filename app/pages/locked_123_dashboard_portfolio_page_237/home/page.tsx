@@ -3,12 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { ref, set, onValue } from "firebase/database";
 import Image from "next/image"; // Import the Next.js Image component
-import {
-  getStorage,
-  ref as storageRef,
-  uploadBytes,
-  getDownloadURL,
-} from "firebase/storage";
+import axios from "axios"; // Import Axios for Cloudinary upload
 import { database } from "../../../firebase"; // Adjust the path as needed
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +14,12 @@ import {
   DialogClose,
 } from "@/components/ui/dialog"; // Import Shadcn dialog components
 import GetMyHome from "./GetMyHome";
+
+// Add Cloudinary constants
+const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY;
+const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET;
+const UPLOAD_PRESET = "portfolio-image"; // Ensure this matches the preset you've set in Cloudinary
 
 const MyHome = () => {
   const [profileData, setProfileData] = useState({
@@ -34,8 +35,6 @@ const MyHome = () => {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null); // Store the file to be uploaded
   const [newTag, setNewTag] = useState(""); // State for managing the new tag input
-
-  const storage = getStorage(); // Firebase storage instance
 
   useEffect(() => {
     const dataRef = ref(database, "MyHome");
@@ -85,6 +84,19 @@ const MyHome = () => {
     }));
   };
 
+  const uploadToCloudinary = async (imageFile: File) => {
+    const formData = new FormData();
+    formData.append("file", imageFile);
+    formData.append("upload_preset", UPLOAD_PRESET);
+
+    const response = await axios.post(
+      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+      formData
+    );
+
+    return response.data.secure_url; // Returns the image URL
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
@@ -93,10 +105,12 @@ const MyHome = () => {
     try {
       let imageUrl = profileData.imageUrl;
 
+      // If a new image is selected, upload it to Cloudinary
       if (imageFile) {
-        const imageRef = storageRef(storage, `MyHomeImages/${imageFile.name}`);
-        await uploadBytes(imageRef, imageFile);
-        imageUrl = await getDownloadURL(imageRef);
+        imageUrl = await uploadToCloudinary(imageFile); // Upload the new image and get the URL
+      } else {
+        // If no new image is selected, keep the old one
+        imageUrl = profileData.imageUrl;
       }
 
       const updatedProfileData = { ...profileData, imageUrl };
@@ -203,9 +217,7 @@ const MyHome = () => {
             <Button
               variant="outline"
               type="submit"
-              className={`bg-primary w-full text-white flex items-center space-x-2 ${
-                submitting ? "opacity-50 cursor-not-allowed" : ""
-              }`}
+              className={`bg-primary w-full text-white flex items-center space-x-2 ${submitting ? "opacity-50 cursor-not-allowed" : ""}`}
               disabled={submitting}
             >
               {submitting ? "Updating..." : "Update Home"}
@@ -223,11 +235,7 @@ const MyHome = () => {
       {/* Notification */}
       {notification && (
         <div
-          className={`p-4 rounded-md ${
-            notification.includes("success")
-              ? "bg-green-100 text-green-800"
-              : "bg-red-100 text-red-800"
-          }`}
+          className={`p-4 rounded-md ${notification.includes("success") ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
         >
           {notification}
         </div>

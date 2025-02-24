@@ -50,6 +50,10 @@ const links = [
     label: "Education",
     description: "Get in touch",
     icon: <GraduationCap />,
+    href: "/pages/education",
+    label: "Education",
+    description: "Get in touch",
+    icon: <GraduationCap />,
   },
   {
     href: "/pages/reviews",
